@@ -1,0 +1,52 @@
+//Storagefactories for short term storage
+
+angular.module('packagerouter.storagefactories', [])
+
+.factory('UserStorageService', function($localStorage) {
+    $localStorage = $localStorage.$default({
+        users: []
+    });
+    var _getAll = function() {
+        return $localStorage.users;
+    };
+    var _add = function(user) {
+        $localStorage.users.push(user);
+    };
+    var _remove = function(user) {
+        $localStorage.users.splice($localStorage.things.indexOf(user), 1);
+    };
+    var _removeAll = function() {
+        $localStorage.users = [];
+    };
+    return {
+        getAll: _getAll,
+        add: _add,
+        remove: _remove,
+        removeAll:_removeAll
+    };
+})
+
+.factory('LocationStorageService', function($localStorage) {
+    $localStorage = $localStorage.$default({
+        locations: []
+    });
+    var _getAll = function() {
+        return $localStorage.locations;
+    };
+    var _add = function(location) {
+        $localStorage.locations.push(location);
+    };
+    var _remove = function(location) {
+        $localStorage.locations.splice($localStorage.things.indexOf(location), 1);
+    };
+    var _removeAll = function() {
+        $localStorage.locations = [];
+    };
+    
+    return {
+        getAll: _getAll,
+        add: _add,
+        remove: _remove,
+        removeAll:_removeAll
+    };
+});
