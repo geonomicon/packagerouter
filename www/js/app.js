@@ -4,7 +4,7 @@
 // the 2nd parameter is an array of 'requires'
 // 'packagerouter.controllers' is found in controllers.js
 // In case of failure contact Rajat Sharma "lunasunkaiser@gmail.com"
-angular.module('packagerouter', ['ionic','ngCordova','ngStorage','packagerouter.controllers','packagerouter.storagefactories'])
+angular.module('packagerouter', ['ionic','ngCordova','ui.grid','ui.grid.exporter','ui.grid.pagination','ngStorage','packagerouter.controllers','packagerouter.storagefactories'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -38,6 +38,15 @@ angular.module('packagerouter', ['ionic','ngCordova','ngStorage','packagerouter.
       'menuContent': {
         templateUrl: 'templates/login.html',
         controller: 'LoginCtrl'
+      }
+    }
+  })
+  .state('app.datagrid', {
+    url: '/datagrid',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/datagrid.html',
+        controller: 'DataGridCtrl'
       }
     }
   })
