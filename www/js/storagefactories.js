@@ -26,6 +26,30 @@ angular.module('packagerouter.storagefactories', [])
     };
 })
 
+.factory('UserIdStorageService', function($localStorage) {
+    $localStorage = $localStorage.$default({
+        userIds: []
+    });
+    var _getAll = function() {
+        return $localStorage.userIds;
+    };
+    var _add = function(userId) {
+        $localStorage.userIds.push(user);
+    };
+    var _remove = function(user) {
+        $localStorage.userIds.splice($localStorage.things.indexOf(userId), 1);
+    };
+    var _removeAll = function() {
+        $localStorage.userIds = [];
+    };
+    return {
+        getAll: _getAll,
+        add: _add,
+        remove: _remove,
+        removeAll:_removeAll
+    };
+})
+
 .factory('LocationStorageService', function($localStorage) {
     $localStorage = $localStorage.$default({
         locations: []

@@ -2,7 +2,7 @@
 //AppCtrl for Logout Process, uses StorageFactories to create User Sessions
 angular.module('packagerouter.controllers', [])
 
-.controller('AppCtrl', function($scope, UserStorageService, $state, $ionicNavBarDelegate) {
+.controller('AppCtrl', function($scope,UserIdStorageService, UserStorageService, $state, $ionicNavBarDelegate) {
   $ionicNavBarDelegate.showBackButton(false);
   $scope.$on('$ionicView.enter', function() {
     if (UserStorageService.getAll().length > 0) {
@@ -15,12 +15,13 @@ angular.module('packagerouter.controllers', [])
   });
   $scope.doLogout = function() {
     UserStorageService.removeAll();
+    UserIdStorageService.removeAll();
     $state.go('app.login');
   };
 })
 
 //Login 
-.controller('LoginCtrl', function($scope, UserStorageService, $state, $ionicNavBarDelegate,$ionicLoading, $http) {
+.controller('LoginCtrl', function($scope,UserIdStorageService, UserStorageService, $state, $ionicNavBarDelegate,$ionicLoading, $http) {
   $ionicNavBarDelegate.showBackButton(false);
   $scope.animateClass = 'button-positive';
   $scope.doLogin = function(email, password) {
@@ -38,7 +39,8 @@ angular.module('packagerouter.controllers', [])
               if(result[0].UserId!='User does not exists'){
                 console.log(result);
                 $state.go('app.location');
-                UserStorageService.add(email);
+                UserStorageService.add(email);  
+                UserIdStorageService.add(result[0].UserId);              
               }
               else{
                 $scope.animateClass = 'button-assertive';
@@ -57,7 +59,7 @@ angular.module('packagerouter.controllers', [])
 
 })
 
-.controller('LocationCtrl', function($scope, UserStorageService, $state, $ionicNavBarDelegate, $cordovaGeolocation, $ionicLoading, $http, LocationStorageService) {
+.controller('LocationCtrl', function($scope,UserIdStorageService, UserStorageService, $state, $ionicNavBarDelegate, $cordovaGeolocation, $ionicLoading, $http, LocationStorageService) {
   $scope.refreshLocation = function() {
     LocationStorageService.removeAll();
     getLocationAndAddress();
@@ -77,13 +79,17 @@ angular.module('packagerouter.controllers', [])
         $cordovaGeolocation.getCurrentPosition(posOptions).then(function(position) {
           $scope.lat = position.coords.latitude;
           $scope.lng = position.coords.longitude;
-          $http.get('//api.opencagedata.com/geocode/v1/json?q=' + $scope.lat + '+' + $scope.lng + '&key=' + $scope.GeoCodingAPIKey)
+          $http.get('http://api.opencagedata.com/geocode/v1/json?q=' + $scope.lat + '+' + $scope.lng + '&key=' + $scope.GeoCodingAPIKey)
             .success(function(result) {
               $scope.address = result.results[0].formatted;
               location.lat = $scope.lat;
               location.lng = $scope.lng;
               location.add = result.results[0].formatted;
               LocationStorageService.add(location);
+            $http.get('http://api.postoncloud.com/api/ShipMart/AddCurrentUSerLocation?UserId='+UserIdStorageService.getAll()[0]+'&Latitude='+$scope.lat+'&Longlatitude='+$scope.lng+'&Status=5&Type=1&CreatedBy=1')
+            .success(function(result){
+                $scope.result = 'Location Sent to Server';
+            });
               console.log(result);
             })
             .finally(function() {
