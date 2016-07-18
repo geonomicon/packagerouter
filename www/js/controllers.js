@@ -126,46 +126,5 @@ angular.module('packagerouter.controllers', [])
     else{
       getLocationAndAddress();
     }
-  });
-  
-})
-.controller('DataGridCtrl', function($scope, UserStorageService, $state, $ionicNavBarDelegate,$http) {
-    $scope.gridOptions = {
-     enableSorting: true,
-      enableFiltering : true,
-      paginationPageSizes: [2, 4, 8],
-       paginationPageSize: 4,
-     columnDefs: [
-       { field: 'AdDescription', enableColumnMenu: false,enableFiltering : false},
-       { field: 'CatName',  enableColumnMenu: false,enableFiltering : false},
-       { field: 'Id',  enableColumnMenu: false,enableFiltering : false},
-       { field: 'Measurment',  enableColumnMenu: false,enableFiltering : false},
-       { field: 'Price',  enableColumnMenu: false,enableFiltering : false},
-       { field: 'Unit',  enableColumnMenu: false,enableFiltering : false},
-     ],
-     enableGridMenu: false,
-     exporterPdfDefaultStyle: {fontSize: 9},
-   exporterPdfTableStyle: {margin: [30, 30, 30, 30]},
-   exporterPdfTableHeaderStyle: {fontSize: 10, bold: true, italics: true, color: 'red'},
-   exporterPdfHeader: { text: 'PlanetData', style: 'headerStyle' },
-   exporterPdfFooter: function ( currentPage, pageCount ) {
-     return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
-   },
-   exporterPdfCustomFormatter: function ( docDefinition ) {
-     docDefinition.styles.headerStyle = { fontSize: 22, bold: true };
-     docDefinition.styles.footerStyle = { fontSize: 10, bold: true };
-     return docDefinition;
-   },
-   exporterPdfOrientation: 'landscape',
-   exporterPdfPageSize: 'LETTER',
-   exporterPdfMaxGridWidth: 500,
-   onRegisterApi: function(gridApi){
-      $scope.gridApi = gridApi;
-    }
-};
-   $http.get('//api.postoncloud.com/api/ServiesPostOnCloud/ServiceList?UserID=1')
-     .success(function(data) {
-       console.log(data);
-       $scope.gridOptions.data = data;
-     });
+  }); 
 });
