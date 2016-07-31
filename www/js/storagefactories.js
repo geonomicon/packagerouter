@@ -34,9 +34,9 @@ angular.module('packagerouter.storagefactories', [])
         return $localStorage.userIds;
     };
     var _add = function(userId) {
-        $localStorage.userIds.push(user);
+        $localStorage.userIds.push(userId);
     };
-    var _remove = function(user) {
+    var _remove = function (userId) {
         $localStorage.userIds.splice($localStorage.things.indexOf(userId), 1);
     };
     var _removeAll = function() {

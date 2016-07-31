@@ -2,7 +2,7 @@
 //AppCtrl for Logout Process, uses StorageFactories to create User Sessions
 angular.module('packagerouter.controllers', [])
 
-.controller('AppCtrl', function($scope,UserIdStorageService, UserStorageService, $state, $ionicNavBarDelegate) {
+.controller('AppCtrl', function($scope,UserIdStorageService, UserStorageService, $state, $ionicNavBarDelegate,$http) {
   $ionicNavBarDelegate.showBackButton(false);
   $scope.$on('$ionicView.enter', function() {
     if (UserStorageService.getAll().length > 0) {
@@ -13,10 +13,19 @@ angular.module('packagerouter.controllers', [])
       $scope.isLoggedIn = false;
     }
   });
-  $scope.doLogout = function() {
-    UserStorageService.removeAll();
-    UserIdStorageService.removeAll();
-    $state.go('app.login');
+  $scope.doLogout = function () {
+      $http.get('http://api.postoncloud.com/api/ShipMart/DeleteVendorExecutive?UserID=' + UserIdStorageService.getAll()[0])
+              .success(function (result) {
+                  console.log(result);
+                  UserStorageService.removeAll();
+                  UserIdStorageService.removeAll();
+                  $state.go('app.login');
+              })
+              .finally(function () {
+                  $ionicLoading.hide();
+                  $scope.$broadcast('scroll.refreshComplete');
+              });    
+   
   };
 })
 
@@ -63,6 +72,7 @@ angular.module('packagerouter.controllers', [])
   $scope.refreshLocation = function() {
     LocationStorageService.removeAll();
     getLocationAndAddress();
+    getPickupRequests();
   }
     var getLocationAndAddress = function() {
     ionic.Platform.ready(function() {
@@ -126,5 +136,7 @@ angular.module('packagerouter.controllers', [])
     else{
       getLocationAndAddress();
     }
-  }); 
+  });
+
+
 });

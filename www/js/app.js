@@ -4,7 +4,7 @@
 // the 2nd parameter is an array of 'requires'
 // 'packagerouter.controllers' is found in controllers.js
 // In case of failure contact Rajat Sharma "lunasunkaiser@gmail.com"
-angular.module('packagerouter', ['ionic','ngCordova','ui.grid','ui.grid.exporter','ui.grid.pagination','ngStorage','packagerouter.controllers','packagerouter.storagefactories'])
+angular.module('packagerouter', ['ionic','ionic.service.core','ngCordova','ui.grid','ui.grid.exporter','ui.grid.pagination','ngStorage','packagerouter.controllers','packagerouter.storagefactories'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -19,6 +19,14 @@ angular.module('packagerouter', ['ionic','ngCordova','ui.grid','ui.grid.exporter
       // org.apache.cordova.statusbar required
       StatusBar.styleDefault();
     }
+
+    var push = new Ionic.Push({
+        "debug": true
+    });
+
+    push.register(function (token) {
+        push.saveToken(token);
+    });
   });
 })
 
