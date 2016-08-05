@@ -41,12 +41,13 @@ angular.module('packagerouter', ['ionic','ionic.service.core','ngCordova','ngSto
       }
     }
   })
-  .state('app.datagrid', {
-    url: '/datagrid',
+  .state('app.tracker', {
+    url: '/tracker',
+    params: {myParam: null},
     views: {
       'menuContent': {
-        templateUrl: 'templates/datagrid.html',
-        controller: 'DataGridCtrl'
+        templateUrl: 'templates/tracker.html',
+        controller: 'TrackerCtrl'
       }
     }
   })

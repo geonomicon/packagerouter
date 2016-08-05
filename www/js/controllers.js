@@ -32,6 +32,7 @@ angular.module('packagerouter.controllers', [])
 .controller('LoginCtrl', function($scope, UserIdStorageService, UserStorageService, $state, $ionicNavBarDelegate, $ionicLoading, $http) {
   $ionicNavBarDelegate.showBackButton(false);
   $scope.animateClass = 'button-positive';
+  
   $scope.doLogin = function(email, password) {
     if (!email) {
       return;
@@ -66,7 +67,8 @@ angular.module('packagerouter.controllers', [])
 
 })
 
-.controller('LocationCtrl', function($scope, UserIdStorageService, UserStorageService, $state, $ionicNavBarDelegate, $cordovaGeolocation, $ionicLoading, $http, LocationStorageService, PrimarySocketFactory) {
+.controller('LocationCtrl', function($scope, UserIdStorageService, UserStorageService, $state, $ionicNavBarDelegate, $cordovaGeolocation, $ionicLoading, $http, LocationStorageService, PrimarySocketFactory,OrderStorageService) {
+  $scope.items = [];
   $scope.refreshLocation = function() {
     LocationStorageService.removeAll();
     getLocationAndAddress();
@@ -136,6 +138,59 @@ angular.module('packagerouter.controllers', [])
 
   PrimarySocketFactory.on('sendUsers', function(data) {
     console.log(data);
+    if(data.pickers[0].userid===UserIdStorageService.getAll()[0]){
+            $scope.items[$scope.items.length] = data.orignalBody;
+            $state.go($state.current, {}, {reload: true});
+        }else{
+          $scope.messageNoPickups = "No Pickups NearBy";
+        }   
+    for(var i =1;i<data.pickers.length;i++){
+      setTimeout(function(i){
+        if(data.pickers[i].userid===UserIdStorageService.getAll()[0]){
+            $scope.items[$scope.items.length] = data.orignalBody;
+            $state.go($state.current, {}, {reload: true});
+        }else{
+          $scope.messageNoPickups = "No Pickups NearBy";
+        }       
+      },30000,i);
+    }    
   });
+
+  $scope.accept = function(result){
+     OrderStorageService.removeAll();
+     OrderStorageService.add(result);
+     $state.go('app.tracker');
+  } 
+})
+
+.controller('TrackerCtrl', function($scope, UserStorageService, $state, $ionicNavBarDelegate,OrderStorageService) {
+  $scope.ct = 0;
+  var colorArr = ['button-assertive','button-positive','button-balanced'];
+  var percentArr = [0,50,100];
+  var statusTextArr = ['Not Picked','In Transit','Delivered'];
+  var buttonTextArr = ['Picked up','Delivered', null];
+  if(OrderStorageService.getAll().length==0){
+    $scope.rangeColorPainters = 'range-royal';
+    $scope.nothingToSeeHere = true;
+  }
+  else{
+    $scope.item = OrderStorageService.getAll()[0];
+    $scope.value = percentArr[0];
+    $scope.statusColor = colorArr[0];
+    $scope.buttonText = buttonTextArr[0];
+    $scope.statusText = statusTextArr[0];
+  }
+
+  $scope.updateStatus = function(){
+    $scope.ct++;
+    $scope.value = percentArr[$scope.ct];
+    $scope.statusColor = colorArr[$scope.ct];
+    $scope.buttonText = buttonTextArr[$scope.ct];
+    $scope.statusText = statusTextArr[$scope.ct];
+    if($scope.buttonText == null){
+      $scope.isDelivered = true;
+    }
+    $state.go($state.current, {}, {reload: true});
+  }
 
 });

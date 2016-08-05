@@ -22,7 +22,7 @@ angular.module('packagerouter.storagefactories', [])
         getAll: _getAll,
         add: _add,
         remove: _remove,
-        removeAll:_removeAll
+        removeAll: _removeAll
     };
 })
 
@@ -36,7 +36,7 @@ angular.module('packagerouter.storagefactories', [])
     var _add = function(userId) {
         $localStorage.userIds.push(userId);
     };
-    var _remove = function (userId) {
+    var _remove = function(userId) {
         $localStorage.userIds.splice($localStorage.things.indexOf(userId), 1);
     };
     var _removeAll = function() {
@@ -46,7 +46,7 @@ angular.module('packagerouter.storagefactories', [])
         getAll: _getAll,
         add: _add,
         remove: _remove,
-        removeAll:_removeAll
+        removeAll: _removeAll
     };
 })
 
@@ -66,11 +66,36 @@ angular.module('packagerouter.storagefactories', [])
     var _removeAll = function() {
         $localStorage.locations = [];
     };
-    
+
     return {
         getAll: _getAll,
         add: _add,
         remove: _remove,
-        removeAll:_removeAll
+        removeAll: _removeAll
+    };
+})
+
+.factory('OrderStorageService', function($localStorage) {
+    $localStorage = $localStorage.$default({
+        Orders: []
+    });
+    var _getAll = function() {
+        return $localStorage.Orders;
+    };
+    var _add = function(Order) {
+        $localStorage.Orders.push(Order);
+    };
+    var _remove = function(Order) {
+        $localStorage.Orders.splice($localStorage.things.indexOf(Order), 1);
+    };
+    var _removeAll = function() {
+        $localStorage.Orders = [];
+    };
+
+    return {
+        getAll: _getAll,
+        add: _add,
+        remove: _remove,
+        removeAll: _removeAll
     };
 });
