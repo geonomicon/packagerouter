@@ -6,7 +6,7 @@
     <button class="button button-block" ng-class="statusColor">
       {{statusText}}
     </button>
-    <div class="card" ng-model="item">
+    <div class="card" ng-model="item" ng-hide="nothingToSeeHere">
       <div class="item item-divider">
         {{item.itemName}}
       </div>

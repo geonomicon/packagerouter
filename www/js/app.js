@@ -4,7 +4,7 @@
 // the 2nd parameter is an array of 'requires'
 // 'packagerouter.controllers' is found in controllers.js
 // In case of failure contact Rajat Sharma "lunasunkaiser@gmail.com"
-angular.module('packagerouter', ['ionic','ionic.service.core','ngCordova','ngStorage','btford.socket-io','packagerouter.controllers','packagerouter.storagefactories','packagerouter.socketfactories'])
+angular.module('packagerouter', ['ionic','ionic.service.core','ngCordova','ngStorage','btford.socket-io','packagerouter.controllers','packagerouter.storagefactories','packagerouter.socketfactories','firebase'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -47,6 +47,16 @@ angular.module('packagerouter', ['ionic','ionic.service.core','ngCordova','ngSto
     views: {
       'menuContent': {
         templateUrl: 'templates/tracker.html',
+        controller: 'TrackerCtrl'
+      }
+    }
+  })
+  .state('app.order', {
+    url: '/order',
+    params: {item: null},
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/order.html',
         controller: 'TrackerCtrl'
       }
     }

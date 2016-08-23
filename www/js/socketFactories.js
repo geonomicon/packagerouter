@@ -8,4 +8,8 @@ angular.module('packagerouter.socketfactories', ['btford.socket-io'])
         });
 
         return mySocket;
-    });
+    })
+    .factory('Items', function($firebaseArray) {
+  var itemsRef = new Firebase("https://gluon.firebaseio.com/items");
+  return $firebaseArray(itemsRef);
+});
