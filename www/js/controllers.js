@@ -32,7 +32,7 @@ angular.module('packagerouter.controllers', [])
 .controller('LoginCtrl', function($scope, UserIdStorageService, UserStorageService, $state, $ionicNavBarDelegate, $ionicLoading, $http) {
   $ionicNavBarDelegate.showBackButton(false);
   $scope.animateClass = 'button-positive';
-  
+
   $scope.doLogin = function(email, password) {
     if (!email) {
       return;
@@ -67,12 +67,26 @@ angular.module('packagerouter.controllers', [])
 
 })
 
-.controller('LocationCtrl', function($scope, UserIdStorageService, UserStorageService, $state, $ionicNavBarDelegate, $cordovaGeolocation, $ionicLoading, $http, LocationStorageService, PrimarySocketFactory,OrderStorageService) {
+.controller('LocationCtrl', function($scope, UserIdStorageService, UserStorageService, $state, $ionicNavBarDelegate,
+  $cordovaGeolocation, $ionicLoading, $http, LocationStorageService,
+  PrimarySocketFactory, OrderStorageService, $cordovaLocalNotification, Items) {
+
+    //$state.go('app.order', {item:item});
+
+  $cordovaLocalNotification.add({
+    id: 1,
+    date: new Date(),
+    message: "Everything Working Fine",
+    title: "Ship24x",
+    autoCancel: true,
+    sound: null
+  }).then(function() {
+    console.log("The notification has been set");
+  });
   $scope.items = [];
   $scope.refreshLocation = function() {
     LocationStorageService.removeAll();
     getLocationAndAddress();
-    getPickupRequests();
   }
   var getLocationAndAddress = function() {
     ionic.Platform.ready(function() {
@@ -89,7 +103,7 @@ angular.module('packagerouter.controllers', [])
         $cordovaGeolocation.getCurrentPosition(posOptions).then(function(position) {
           $scope.lat = position.coords.latitude;
           $scope.lng = position.coords.longitude;
-          $http.get('http://api.opencagedata.com/geocode/v1/json?q=' + $scope.lat + '+' + $scope.lng + '&key=' + $scope.GeoCodingAPIKey)
+          $http.get('http://api.opencageItems.com/geocode/v1/json?q=' + $scope.lat + '+' + $scope.lng + '&key=' + $scope.GeoCodingAPIKey)
             .success(function(result) {
               $scope.address = result.results[0].formatted;
               location.lat = $scope.lat;
@@ -136,61 +150,84 @@ angular.module('packagerouter.controllers', [])
     }
   });
 
-  PrimarySocketFactory.on('sendUsers', function(data) {
-    console.log(data);
-    if(data.pickers[0].userid===UserIdStorageService.getAll()[0]){
-            $scope.items[$scope.items.length] = data.orignalBody;
-            $state.go($state.current, {}, {reload: true});
-        }else{
-          $scope.messageNoPickups = "No Pickups NearBy";
-        }   
-    for(var i =1;i<data.pickers.length;i++){
-      setTimeout(function(i){
-        if(data.pickers[i].userid===UserIdStorageService.getAll()[0]){
-            $scope.items[$scope.items.length] = data.orignalBody;
-            $state.go($state.current, {}, {reload: true});
-        }else{
-          $scope.messageNoPickups = "No Pickups NearBy";
-        }       
-      },30000,i);
-    }    
+  Items.$watch(function(event) {
+    if (event.event === 'child_added'&& !(OrderStorageService.getAll().length>0)) {
+      console.log(Items[0]);
+      if (Items[0].pickers[0].userid === UserIdStorageService.getAll()[0]) {
+        $cordovaLocalNotification.add({
+          id: Items[0].orignalBody.shipmentId,
+          date: new Date(),
+          message: Items[0].orignalBody.pickupAddress,
+          title: Items[0].orignalBody.itemName,
+          autoCancel: true,
+          sound: null
+        }).then(function() {
+          console.log("The notification has been set");
+        });
+        $scope.items[0] = Items[0].orignalBody;
+      } else {
+        $scope.messageNoPickups = "No Pickups NearBy";
+      }
+      for (var i = 1; i < Items[0].pickers.length; i++) {
+        setTimeout(function(i) {
+          if (Items[0].pickers[i].userid === UserIdStorageService.getAll()[0]) {
+            $scope.items[0] = Items[0].orignalBody;
+            $state.go($state.current, {}, {
+              reload: true
+            });
+          } else {
+            $scope.messageNoPickups = "No Pickups NearBy";
+          }
+        }, 30000, i);
+      }
+    }
   });
 
-  $scope.accept = function(result){
-     OrderStorageService.removeAll();
-     OrderStorageService.add(result);
-     $state.go('app.tracker');
-  } 
+  $scope.accept = function(result) {
+    $http.get('https://bufferbasedrouting.herokuapp.com/dangling/delete')
+      .success(function(microResult) {
+        $scope.items = [];
+        OrderStorageService.removeAll();
+        OrderStorageService.add(result);
+        $state.go('app.tracker');
+      });
+  }
 })
 
-.controller('TrackerCtrl', function($scope, UserStorageService, $state, $ionicNavBarDelegate,OrderStorageService) {
-  $scope.ct = 0;
-  var colorArr = ['button-assertive','button-positive','button-balanced'];
-  var percentArr = [0,50,100];
-  var statusTextArr = ['Not Picked','In Transit','Delivered'];
-  var buttonTextArr = ['Picked up','Delivered', null];
-  if(OrderStorageService.getAll().length==0){
+.controller('TrackerCtrl', function($scope, UserStorageService, UserIdStorageService,$state, $ionicNavBarDelegate, OrderStorageService, $http) {
+  $scope.ct = 1;
+  var colorArr = ['button-assertive', 'button-positive', 'button-balanced', 'button-calm', 'button-energized'];
+  var percentArr = [0, 50, 100];
+  var statusTextArr = ['Assigned', 'Reach Vendor Premises', 'Picked from Vendor', 'Reached Customer Premises', 'Delievered', null];
+  if (OrderStorageService.getAll().length == 0) {
     $scope.rangeColorPainters = 'range-royal';
     $scope.nothingToSeeHere = true;
-  }
-  else{
+  } else {
     $scope.item = OrderStorageService.getAll()[0];
     $scope.value = percentArr[0];
     $scope.statusColor = colorArr[0];
-    $scope.buttonText = buttonTextArr[0];
+    $scope.buttonText =statusTextArr[1];
     $scope.statusText = statusTextArr[0];
   }
 
-  $scope.updateStatus = function(){
-    $scope.ct++;
-    $scope.value = percentArr[$scope.ct];
-    $scope.statusColor = colorArr[$scope.ct];
-    $scope.buttonText = buttonTextArr[$scope.ct];
-    $scope.statusText = statusTextArr[$scope.ct];
-    if($scope.buttonText == null){
-      $scope.isDelivered = true;
-    }
-    $state.go($state.current, {}, {reload: true});
+  $scope.updateStatus = function() {
+
+    $http.get('http://api.postoncloud.com/api/ShipMart/AddShipmentTracking?ShipmentID=' + $scope.item.shipmentId + '&AssignTo=' + UserIdStorageService.getAll()[0] + '&Status=' + ($scope.ct + 1))
+      .success(function(result) {
+        console.log(result);
+        $scope.ct++;
+        $scope.value = percentArr[$scope.ct];
+        $scope.statusColor = colorArr[$scope.ct];
+        $scope.buttonText = statusTextArr[$scope.ct + 1];
+        $scope.statusText = statusTextArr[$scope.ct];
+        if ($scope.buttonText == null) {
+          $scope.isDelivered = true;
+        }
+        $state.go($state.current, {}, {
+          reload: true
+        });
+      });
+
   }
 
 });
