@@ -57,7 +57,7 @@ angular.module('packagerouter', ['ionic','ionic.service.core','ngCordova','ngSto
     views: {
       'menuContent': {
         templateUrl: 'templates/order.html',
-        controller: 'TrackerCtrl'
+        controller: 'OrderCtrl'
       }
     }
   })

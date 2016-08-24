@@ -1,4 +1,4 @@
-//all controllers are defined here 
+//all controllers are defined here
 //AppCtrl for Logout Process, uses StorageFactories to create User Sessions
 angular.module('packagerouter.controllers', [])
 
@@ -28,7 +28,7 @@ angular.module('packagerouter.controllers', [])
   };
 })
 
-//Login 
+//Login
 .controller('LoginCtrl', function($scope, UserIdStorageService, UserStorageService, $state, $ionicNavBarDelegate, $ionicLoading, $http) {
   $ionicNavBarDelegate.showBackButton(false);
   $scope.animateClass = 'button-positive';
@@ -87,6 +87,9 @@ angular.module('packagerouter.controllers', [])
   $scope.refreshLocation = function() {
     LocationStorageService.removeAll();
     getLocationAndAddress();
+  }
+  $scope.ordersList = function(item){
+    $state.go('app.order', {item:item});
   }
   var getLocationAndAddress = function() {
     ionic.Platform.ready(function() {
@@ -193,6 +196,16 @@ angular.module('packagerouter.controllers', [])
       });
   }
 })
+
+//////order controller////
+.controller('OrderCtrl',function($scope, UserStorageService, UserIdStorageService,$state, $ionicNavBarDelegate, OrderStorageService, $http){
+
+$scope.item = $state.params.item;
+
+
+}
+
+
 
 .controller('TrackerCtrl', function($scope, UserStorageService, UserIdStorageService,$state, $ionicNavBarDelegate, OrderStorageService, $http) {
   $scope.ct = 1;
