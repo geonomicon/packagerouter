@@ -1,0 +1,91 @@
+<ion-view view-title="Location">
+  <ion-content>
+    <ion-refresher pulling-text="Pull to refresh..." on-refresh="refreshLocation()">
+    </ion-refresher>
+    <div class="card">
+      <div class="item item-divider">
+        Your Current Location
+      </div>
+      <div class="item item-text-wrap">
+        <div class="row latlngcard">
+          <div class="col">Lat</div>
+          <div class="col">Lng</div>
+        </div>
+        <div class="row latlngcard">
+          <div class="col">{{lat}}</div>
+          <div class="col">{{lng}}</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="item item-divider">
+        Address
+      </div>
+      <div class="item item-text-wrap">
+        {{address}}
+      </div>
+    </div>
+    <!--<div class="card">
+      <div class="item item-divider">
+        Result
+      </div>
+      <div class="item item-text-wrap">
+        {{result}}
+      </div>
+    </div>
+  </ion-list>
+  <!--<div class="list">
+
+  <div class="item item-divider">
+    Location
+  </div>
+  <a class="item" href="#">
+    Lat: {{lat}}
+  </a>
+  <a class="item" href="#">
+    Long: {{lng}}
+  </a>
+  <div class="item item-divider">
+   Orders
+ </div>
+ <div  ng-repeat='item in items'>
+ <a class="item" ng-click='ordersList(item)'  >
+    {{item.itemName}}
+ </a>
+ </div>-->
+    <!-- <div class="item item-divider">
+      Orders
+    </div> -->
+
+<div class="card" ng-repeat="item in items">
+      <div class="item item-divider">
+        {{item.itemName}}
+      </div>
+    <div class="item item-text-wrap">
+        <div class="row">
+          <div class="col">Delivery Add</div>
+          <div class="col">{{item.deliveryAddress}}</div>
+        </div>
+        <div class="row">
+          <div class="col">Pickup Add</div>
+          <div class="col">{{item.pickupAddress}}</div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <button class="button button-block button-positive" ng-click="accept(item)">
+              Accept
+            </button>
+          </div>
+          <div class="col">
+            <button class="button button-block button-assertive" ng-click="reject(item)">
+                 Reject
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="item item-divider">
+        TimeSlot : {{item.timeSlot}}
+      </div>
+    </div>
+  </ion-content>
+</ion-view>

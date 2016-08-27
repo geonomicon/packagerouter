@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="C:\_Androidenvs\ANDROID_HOME\extras\android\m2repository\com\android\support\support-annotations\24.1.1\support-annotations-24.1.1.jar"
+        jumboMode="false"
+        revision="24.0.1"
+        sha1="3af19f153122737b372622fa6c81dd11a1c6b999">
+        <dex dex="C:\Users\lskaiser\Desktop\packagerouter\packagerouter\platforms\android\build\intermediates\pre-dexed\debug\support-annotations-24.1.1_b8b01225f72f9ba812b48bed19e225fa92493ce0.jar" />
+    </item>
+    <item
+        jar="C:\Users\lskaiser\Desktop\packagerouter\packagerouter\platforms\android\build\intermediates\exploded-aar\com.android.support\support-v4\24.1.1\jars\libs\internal_impl-24.1.1.jar"
+        jumboMode="false"
+        revision="24.0.1"
+        sha1="f78c2f395cb096f9dc1dc07e729922b8fcd3c4f5">
+        <dex dex="C:\Users\lskaiser\Desktop\packagerouter\packagerouter\platforms\android\build\intermediates\pre-dexed\debug\internal_impl-24.1.1_69dd5cccb3543933f3d087d3d42dbef49c3ce9ba.jar" />
+    </item>
+    <item
+        jar="C:\Users\lskaiser\Desktop\packagerouter\packagerouter\platforms\android\build\intermediates\exploded-aar\android\CordovaLib\unspecified\debug\jars\classes.jar"
+        jumboMode="false"
+        revision="24.0.1"
+        sha1="432f6ba72245f3d54821ccc3d4a00dd07f1394e4">
+        <dex dex="C:\Users\lskaiser\Desktop\packagerouter\packagerouter\platforms\android\build\intermediates\pre-dexed\debug\CordovaLib-unspecified-debug_f03ba6bfd533d586bc5d42afb35fe64072b69fae.jar" />
+    </item>
+    <item
+        jar="C:\Users\lskaiser\Desktop\packagerouter\packagerouter\platforms\android\build\intermediates\exploded-aar\com.android.support\support-v4\24.1.1\jars\classes.jar"
+        jumboMode="false"
+        revision="24.0.1"
+        sha1="6d7d803871e3203465f71a163e7af104f807b446">
+        <dex dex="C:\Users\lskaiser\Desktop\packagerouter\packagerouter\platforms\android\build\intermediates\pre-dexed\debug\com.android.support-support-v4-24.1.1_90ca1ba2a4e38c4f9612a20d1a0519954d0c934d.jar" />
+    </item>
+
+</items>
