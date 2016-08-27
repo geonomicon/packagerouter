@@ -1,6 +1,7 @@
 <ion-view view-title="Tracking">
   <ion-content>
      <div class = "item range" ng-class="rangeColorPainter" >
+
       <input type = "range" name = "track" min="0" max="100" value="{{value}}">
     </div>
     <button class="button button-block" ng-class="statusColor">
@@ -19,7 +20,7 @@
           <div class="col">Pickup Add</div>
           <div class="col">{{item.pickupAddress}}</div>
         </div>
-      
+
       <button class="button button-block button-positive" ng-click="updateStatus()" ng-hide="isDelivered">
           {{buttonText}}
       </button>

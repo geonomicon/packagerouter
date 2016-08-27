@@ -69,10 +69,8 @@ $ionicSideMenuDelegate.canDragContent(false);
 })
 
 .controller('LocationCtrl', function($scope, UserIdStorageService, UserStorageService, $state, $ionicNavBarDelegate,
-  $cordovaGeolocation, $ionicLoading, $http, LocationStorageService,
-  PrimarySocketFactory, OrderStorageService, Items) {
-
-    //$state.go('app.order', {item:item});
+  $cordovaGeolocation, $ionicLoading, $http, LocationStorageService, OrderStorageService, $cordovaLocalNotification, Items) {
+>>>>>>> a3cd67a8e913daa3e8251d98198b4df6bc4983f2
 
   // $cordovaLocalNotification.add({
   //   id: 1,
@@ -89,24 +87,30 @@ $ionicSideMenuDelegate.canDragContent(false);
     LocationStorageService.removeAll();
     getLocationAndAddress();
   }
+
   $scope.ordersList = function(item){
     $state.go('app.order', {item:item});
   }
+
+$scope.GeoCodingAPIKey = '93d639c2f2e101a955c9dd2ec8704fca';
+
   var getLocationAndAddress = function() {
+
     ionic.Platform.ready(function() {
-      $ionicLoading.show({
-        template: '<ion-spinner icon="bubbles"></ion-spinner><br/>Acquiring location!'
-      });
 
       var posOptions = {
         enableHighAccuracy: true,
         timeout: 2000000,
         maximumAge: 0
       };
+
       if (LocationStorageService.getAll().length < 1) {
         $cordovaGeolocation.getCurrentPosition(posOptions).then(function(position) {
           $scope.lat = position.coords.latitude;
           $scope.lng = position.coords.longitude;
+          $ionicLoading.show({
+               template: '<ion-spinner icon="bubbles"></ion-spinner><br/>Acquiring location!'
+          });
           $http.get('https://api.opencagedata.com/geocode/v1/json?q=' + $scope.lat + '+' + $scope.lng + '&key=' + $scope.GeoCodingAPIKey)
             .success(function(result) {
               $scope.address = result.results[0].formatted;
@@ -118,13 +122,7 @@ $ionicSideMenuDelegate.canDragContent(false);
                 .success(function(miniresult) {
                   $scope.result = 'Location Sent to Server';
                 });
-              console.log(miniresult);
             })
-            .finally(function() {
-              $ionicLoading.hide();
-              $scope.$broadcast('scroll.refreshComplete');
-            });
-
         }, function(err) {
           $ionicLoading.hide();
           $scope.$broadcast('scroll.refreshComplete');
@@ -139,13 +137,17 @@ $ionicSideMenuDelegate.canDragContent(false);
       }
     });
   };
-  $scope.GeoCodingAPIKey = '93d639c2f2e101a955c9dd2ec8704fca';
+
+
+
   var location = {
     lat: null,
     lng: null,
     add: null
   };
+
   $ionicNavBarDelegate.showBackButton(false);
+
   $scope.$on('$ionicView.enter', function() {
     if (UserStorageService.getAll().length < 1) {
       $state.go('app.login');
@@ -154,6 +156,7 @@ $ionicSideMenuDelegate.canDragContent(false);
     }
   });
 
+<<<<<<< HEAD
 
   Items.$watch(function(event) {
     if (event.event === 'child_added'&& !(OrderStorageService.getAll().length>0)) {
@@ -189,19 +192,56 @@ $ionicSideMenuDelegate.canDragContent(false);
       }
     }
   });
+=======
+$scope.items = Items;
+  // Items.$watch(function(event) {
+  //     if (Items[0].pickers[0].userid === UserIdStorageService.getAll()[0]) {
+  //       $cordovaLocalNotification.add({
+  //         id: Items[0].orignalBody.shipmentId,
+  //         date: new Date(),
+  //         message: Items[0].orignalBody.pickupAddress,
+  //         title: Items[0].orignalBody.itemName,
+  //         autoCancel: true,
+  //         sound: null
+  //       }).then(function() {
+  //         console.log("The notification has been set");
+  //       });
+  //       $scope.items[0] = Items[0].orignalBody;
+  //     } else {
+  //       $scope.messageNoPickups = "No Pickups NearBy";
+  //     }
+
+  //     for (var i = 1; i < Items[0].pickers.length; i++) {
+  //       setTimeout(function(i) {
+  //         if (Items[0].pickers[i].userid === UserIdStorageService.getAll()[0]) {
+  //           $scope.items[0] = Items[0].orignalBody;
+  //           $state.go($state.current, {}, {
+  //             reload: true
+  //           });
+  //         } else {
+  //           $scope.messageNoPickups = "No Pickups NearBy";
+  //         }
+  //       }, 30000, i);
+  //     }
+  // });
+>>>>>>> a3cd67a8e913daa3e8251d98198b4df6bc4983f2
 
   $scope.accept = function(result) {
-    $http.get('https://bufferbasedrouting.herokuapp.com/dangling/delete')
-      .success(function(microResult) {
-        $scope.items = [];
-        OrderStorageService.removeAll();
-        OrderStorageService.add(result);
-        $state.go('app.tracker');
-      });
+    OrderStorageService.removeAll();
+    OrderStorageService.add(result);
+    console.log(Items.$indexFor(result));
+    $state.go('app.tracker');
+  //   //adaNameRef.set({ first: 'Ada', last: 'Lovelace' })
+  // .then(function() {
+  //   console.log('Synchronization succeeded');
+  // })
+  // .catch(function(error) {
+  //   console.log('Synchronization failed');
+  // });
   }
+
 })
 
-//////order controller////
 .controller('OrderCtrl',function($scope, $state){
     $scope.item = $state.params.item;
 })
@@ -211,6 +251,7 @@ $ionicSideMenuDelegate.canDragContent(false);
   var colorArr = ['button-assertive', 'button-positive', 'button-balanced', 'button-calm', 'button-energized'];
   var percentArr = [0, 50, 100];
   var statusTextArr = ['Assigned', 'Reach Vendor Premises', 'Picked from Vendor', 'Reached Customer Premises', 'Delievered', null];
+
   if (OrderStorageService.getAll().length == 0) {
     $scope.rangeColorPainters = 'range-royal';
     $scope.nothingToSeeHere = true;
