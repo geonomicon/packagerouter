@@ -29,7 +29,8 @@ angular.module('packagerouter.controllers', [])
 })
 
 //Login
-.controller('LoginCtrl', function($scope, UserIdStorageService, UserStorageService, $state, $ionicNavBarDelegate, $ionicLoading, $http) {
+.controller('LoginCtrl', function($scope,$ionicSideMenuDelegate, UserIdStorageService, UserStorageService, $state, $ionicNavBarDelegate, $ionicLoading, $http) {
+$ionicSideMenuDelegate.canDragContent(false);
   $ionicNavBarDelegate.showBackButton(false);
   $scope.animateClass = 'button-positive';
 
@@ -69,20 +70,20 @@ angular.module('packagerouter.controllers', [])
 
 .controller('LocationCtrl', function($scope, UserIdStorageService, UserStorageService, $state, $ionicNavBarDelegate,
   $cordovaGeolocation, $ionicLoading, $http, LocationStorageService,
-  PrimarySocketFactory, OrderStorageService, $cordovaLocalNotification, Items) {
+  PrimarySocketFactory, OrderStorageService, Items) {
 
     //$state.go('app.order', {item:item});
 
-  $cordovaLocalNotification.add({
-    id: 1,
-    date: new Date(),
-    message: "Everything Working Fine",
-    title: "Ship24x",
-    autoCancel: true,
-    sound: null
-  }).then(function() {
-    console.log("The notification has been set");
-  });
+  // $cordovaLocalNotification.add({
+  //   id: 1,
+  //   date: new Date(),
+  //   message: "Everything Working Fine",
+  //   title: "Ship24x",
+  //   autoCancel: true,
+  //   sound: null
+  // }).then(function() {
+  //   console.log("The notification has been set");
+  // });
   $scope.items = [];
   $scope.refreshLocation = function() {
     LocationStorageService.removeAll();
@@ -153,24 +154,27 @@ angular.module('packagerouter.controllers', [])
     }
   });
 
+
   Items.$watch(function(event) {
     if (event.event === 'child_added'&& !(OrderStorageService.getAll().length>0)) {
       console.log(Items[0]);
-      if (Items[0].pickers[0].userid === UserIdStorageService.getAll()[0]) {
-        $cordovaLocalNotification.add({
-          id: Items[0].orignalBody.shipmentId,
-          date: new Date(),
-          message: Items[0].orignalBody.pickupAddress,
-          title: Items[0].orignalBody.itemName,
-          autoCancel: true,
-          sound: null
-        }).then(function() {
-          console.log("The notification has been set");
-        });
-        $scope.items[0] = Items[0].orignalBody;
-      } else {
-        $scope.messageNoPickups = "No Pickups NearBy";
-      }
+      // if (Items[0].pickers[0].userid === UserIdStorageService.getAll()[0]) {
+      //   $cordovaLocalNotification.add({
+      //     id: Items[0].orignalBody.shipmentId,
+      //     date: new Date(),
+      //     message: Items[0].orignalBody.pickupAddress,
+      //     title: Items[0].orignalBody.itemName,
+      //     autoCancel: true,
+      //     sound: null
+      //   }).then(function() {
+      //     console.log("The notification has been set");
+      //   });
+      //   $scope.items[0] = Items[0].orignalBody;
+      // } else {
+      //   $scope.messageNoPickups = "No Pickups NearBy";
+      // }
+
+
       for (var i = 1; i < Items[0].pickers.length; i++) {
         setTimeout(function(i) {
           if (Items[0].pickers[i].userid === UserIdStorageService.getAll()[0]) {
