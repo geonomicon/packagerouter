@@ -70,7 +70,7 @@ $ionicSideMenuDelegate.canDragContent(false);
 
 .controller('LocationCtrl', function($scope, UserIdStorageService, UserStorageService, $state, $ionicNavBarDelegate,
   $cordovaGeolocation, $ionicLoading, $http, LocationStorageService, OrderStorageService, $cordovaLocalNotification, Items) {
->>>>>>> a3cd67a8e913daa3e8251d98198b4df6bc4983f2
+
 
   // $cordovaLocalNotification.add({
   //   id: 1,
@@ -121,6 +121,8 @@ $scope.GeoCodingAPIKey = '93d639c2f2e101a955c9dd2ec8704fca';
               $http.get('http://api.postoncloud.com/api/ShipMart/AddCurrentUSerLocation?UserId=' + UserIdStorageService.getAll()[0] + '&Latitude=' + $scope.lat + '&Longlatitude=' + $scope.lng + '&Status=5&Type=1&CreatedBy=1')
                 .success(function(miniresult) {
                   $scope.result = 'Location Sent to Server';
+                  $ionicLoading.hide();
+                  $scope.$broadcast('scroll.refreshComplete');
                 });
             })
         }, function(err) {
@@ -156,75 +158,11 @@ $scope.GeoCodingAPIKey = '93d639c2f2e101a955c9dd2ec8704fca';
     }
   });
 
-<<<<<<< HEAD
-
-  Items.$watch(function(event) {
-    if (event.event === 'child_added'&& !(OrderStorageService.getAll().length>0)) {
-      console.log(Items[0]);
-      // if (Items[0].pickers[0].userid === UserIdStorageService.getAll()[0]) {
-      //   $cordovaLocalNotification.add({
-      //     id: Items[0].orignalBody.shipmentId,
-      //     date: new Date(),
-      //     message: Items[0].orignalBody.pickupAddress,
-      //     title: Items[0].orignalBody.itemName,
-      //     autoCancel: true,
-      //     sound: null
-      //   }).then(function() {
-      //     console.log("The notification has been set");
-      //   });
-      //   $scope.items[0] = Items[0].orignalBody;
-      // } else {
-      //   $scope.messageNoPickups = "No Pickups NearBy";
-      // }
 
 
-      for (var i = 1; i < Items[0].pickers.length; i++) {
-        setTimeout(function(i) {
-          if (Items[0].pickers[i].userid === UserIdStorageService.getAll()[0]) {
-            $scope.items[0] = Items[0].orignalBody;
-            $state.go($state.current, {}, {
-              reload: true
-            });
-          } else {
-            $scope.messageNoPickups = "No Pickups NearBy";
-          }
-        }, 30000, i);
-      }
-    }
-  });
-=======
 $scope.items = Items;
-  // Items.$watch(function(event) {
-  //     if (Items[0].pickers[0].userid === UserIdStorageService.getAll()[0]) {
-  //       $cordovaLocalNotification.add({
-  //         id: Items[0].orignalBody.shipmentId,
-  //         date: new Date(),
-  //         message: Items[0].orignalBody.pickupAddress,
-  //         title: Items[0].orignalBody.itemName,
-  //         autoCancel: true,
-  //         sound: null
-  //       }).then(function() {
-  //         console.log("The notification has been set");
-  //       });
-  //       $scope.items[0] = Items[0].orignalBody;
-  //     } else {
-  //       $scope.messageNoPickups = "No Pickups NearBy";
-  //     }
 
-  //     for (var i = 1; i < Items[0].pickers.length; i++) {
-  //       setTimeout(function(i) {
-  //         if (Items[0].pickers[i].userid === UserIdStorageService.getAll()[0]) {
-  //           $scope.items[0] = Items[0].orignalBody;
-  //           $state.go($state.current, {}, {
-  //             reload: true
-  //           });
-  //         } else {
-  //           $scope.messageNoPickups = "No Pickups NearBy";
-  //         }
-  //       }, 30000, i);
-  //     }
-  // });
->>>>>>> a3cd67a8e913daa3e8251d98198b4df6bc4983f2
+
 
   $scope.accept = function(result) {
     OrderStorageService.removeAll();

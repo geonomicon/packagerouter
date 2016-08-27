@@ -1,9 +1,19 @@
 <ion-view view-title="Tracking">
   <ion-content>
-     <div class = "item range" ng-class="rangeColorPainter" >
+    <div class="card">
+   <div class="item item-text-wrap">
+    <i class="icon ion-person" style="left: 7%; position: relative;"></i>
+    <i class="icon ion-home" style="left:23%; position: relative;"></i>
+    <i class="icon ion-android-cart" style="left: 38%; position: relative;"></i>
+    <i class="icon ion-android-person" style="left: 53%; position: relative;"></i>
+    <i class="icon ion-bag" style="left: 70%; position: relative;"></i>
+   </div>
+ </div>
+
+     <!-- <div class = "item range" ng-class="rangeColorPainter" >
 
       <input type = "range" name = "track" min="0" max="100" value="{{value}}">
-    </div>
+    </div> -->
     <button class="button button-block" ng-class="statusColor">
       {{statusText}}
     </button>

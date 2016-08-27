@@ -2,35 +2,37 @@
   <ion-content>
 
     <div class="card">
-      <div class="item item-divider">
-        {{item.itemName}}
-      </div>
-       <div class="item item-text-wrap">
+
+    <div class="item item-text-wrap">
+
         <div class="row">
           <div class="col">Delivery Add</div>
-          <div class="col">{{item.deliveryAddress}}</div>
+          <div class="col">{{item.orignalBody.deliveryAddress}}</div>
         </div>
         <div class="row">
           <div class="col">Pickup Add</div>
-          <div class="col">{{item.pickupAddress}}</div>
+          <div class="col">{{item.orignalBody.pickupAddress}}</div>
         </div>
         <div class="row">
           <div class="col">
-            <button class="button button-block button-positive" ng-click="accept(item)">
+            <button class="button button-block button-positive" ng-click="accept(item.$id)">
               Accept
             </button>
           </div>
           <div class="col">
-            <button class="button button-block button-assertive" ng-click="reject(item)">
+            <button class="button button-block button-assertive" ng-click="reject(item.$id)">
                  Reject
             </button>
           </div>
         </div>
+
       </div>
       <div class="item item-divider">
-        TimeSlot : {{item.timeSlot}}
+        TimeSlot : {{item.orignalBody.timeSlot}}
       </div>
-</div>
+
+      </div>
+
 
   </ion-content>
 </ion-view>

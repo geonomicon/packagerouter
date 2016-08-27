@@ -47,11 +47,19 @@
     Long: {{lng}}
   </a>
   <div class="item item-divider">
+   Accepted Orders
+  </div>
+  <div  ng-repeat='item in items'>
+  <a class="item" ng-click='ordersList(item)'  >
+   {{item.orignalBody.itemName}}
+  </a>
+  </div>
+  <div class="item item-divider">
    Orders
  </div>
  <div  ng-repeat='item in items'>
  <a class="item" ng-click='ordersList(item)'  >
-    {{item.itemName}}
+  {{item.orignalBody.itemName}}
  </a>
  </div>
 
