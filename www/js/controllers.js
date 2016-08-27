@@ -106,7 +106,7 @@ angular.module('packagerouter.controllers', [])
         $cordovaGeolocation.getCurrentPosition(posOptions).then(function(position) {
           $scope.lat = position.coords.latitude;
           $scope.lng = position.coords.longitude;
-          $http.get('http://api.opencageItems.com/geocode/v1/json?q=' + $scope.lat + '+' + $scope.lng + '&key=' + $scope.GeoCodingAPIKey)
+          $http.get('https://api.opencagedata.com/geocode/v1/json?q=' + $scope.lat + '+' + $scope.lng + '&key=' + $scope.GeoCodingAPIKey)
             .success(function(result) {
               $scope.address = result.results[0].formatted;
               location.lat = $scope.lat;
@@ -114,10 +114,10 @@ angular.module('packagerouter.controllers', [])
               location.add = result.results[0].formatted;
               LocationStorageService.add(location);
               $http.get('http://api.postoncloud.com/api/ShipMart/AddCurrentUSerLocation?UserId=' + UserIdStorageService.getAll()[0] + '&Latitude=' + $scope.lat + '&Longlatitude=' + $scope.lng + '&Status=5&Type=1&CreatedBy=1')
-                .success(function(result) {
+                .success(function(miniresult) {
                   $scope.result = 'Location Sent to Server';
                 });
-              console.log(result);
+              console.log(miniresult);
             })
             .finally(function() {
               $ionicLoading.hide();
@@ -198,14 +198,9 @@ angular.module('packagerouter.controllers', [])
 })
 
 //////order controller////
-.controller('OrderCtrl',function($scope, UserStorageService, UserIdStorageService,$state, $ionicNavBarDelegate, OrderStorageService, $http){
-
-$scope.item = $state.params.item;
-
-
-}
-
-
+.controller('OrderCtrl',function($scope, $state){
+    $scope.item = $state.params.item;
+})
 
 .controller('TrackerCtrl', function($scope, UserStorageService, UserIdStorageService,$state, $ionicNavBarDelegate, OrderStorageService, $http) {
   $scope.ct = 1;

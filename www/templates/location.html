@@ -2,7 +2,7 @@
   <ion-content>
     <ion-refresher pulling-text="Pull to refresh..." on-refresh="refreshLocation()">
     </ion-refresher>
-    <!--<div class="card">
+    <div class="card">
       <div class="item item-divider">
         Your Current Location
       </div>
@@ -24,7 +24,7 @@
       <div class="item item-text-wrap">
         {{address}}
       </div>
-    </div>-->
+    </div>
     <!--<div class="card">
       <div class="item item-divider">
         Result
@@ -33,8 +33,8 @@
         {{result}}
       </div>
     </div>
-  </ion-list>-->
-  <div class="list">
+  </ion-list>
+  <!--<div class="list">
 
   <div class="item item-divider">
     Location
@@ -52,16 +52,16 @@
  <a class="item" ng-click='ordersList(item)'  >
     {{item.itemName}}
  </a>
- </div>
+ </div>-->
     <!-- <div class="item item-divider">
       Orders
     </div> -->
 
-    <!-- <div class="card" ng-repeat="item in items">
+<div class="card" ng-repeat="item in items">
       <div class="item item-divider">
         {{item.itemName}}
-      </div> -->
-      <!-- <div class="item item-text-wrap">
+      </div>
+    <div class="item item-text-wrap">
         <div class="row">
           <div class="col">Delivery Add</div>
           <div class="col">{{item.deliveryAddress}}</div>
@@ -82,7 +82,7 @@
             </button>
           </div>
         </div>
-      </div> -->
+      </div>
       <div class="item item-divider">
         TimeSlot : {{item.timeSlot}}
       </div>
