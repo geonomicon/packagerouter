@@ -263,6 +263,7 @@ angular.module('packagerouter.controllers', [])
   $scope.ct = 1;
   var colorArr = ['button-assertive', 'button-positive', 'button-balanced', 'button-calm', 'button-energized'];
   var percentArr = [0, 50, 100];
+  var classChanger = [''];
   var statusTextArr = ['Assigned', 'Reach Vendor Premises', 'Picked from Vendor', 'Reached Customer Premises', 'Delievered', null];
 
   if (OrderStorageService.getAll().length == 0) {
@@ -294,6 +295,12 @@ angular.module('packagerouter.controllers', [])
         });
       });
 
+  }
+
+  $scope.changeClass = function(status){
+    if(status==$scope.ct){
+      return 'positive';
+    }
   }
 
 });
