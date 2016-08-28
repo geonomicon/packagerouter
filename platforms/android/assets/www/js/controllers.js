@@ -86,16 +86,18 @@ angular.module('packagerouter.controllers', [])
     getLocationAndAddress();
   }
 
-  $scope.ordersList = function(item){
-    $state.go('app.order', {item:item});
+  $scope.ordersList = function(item) {
+    $state.go('app.order', {
+      item: item
+    });
   }
 
-$scope.GeoCodingAPIKey = '93d639c2f2e101a955c9dd2ec8704fca';
+  $scope.GeoCodingAPIKey = '93d639c2f2e101a955c9dd2ec8704fca';
 
   var getLocationAndAddress = function() {
 
     ionic.Platform.ready(function() {
-    
+
       var posOptions = {
         enableHighAccuracy: true,
         timeout: 2000000,
@@ -107,7 +109,7 @@ $scope.GeoCodingAPIKey = '93d639c2f2e101a955c9dd2ec8704fca';
           $scope.lat = position.coords.latitude;
           $scope.lng = position.coords.longitude;
           $ionicLoading.show({
-               template: '<ion-spinner icon="bubbles"></ion-spinner><br/>Acquiring location!'
+            template: '<ion-spinner icon="bubbles"></ion-spinner><br/>Acquiring location!'
           });
           $http.get('https://api.opencagedata.com/geocode/v1/json?q=' + $scope.lat + '+' + $scope.lng + '&key=' + $scope.GeoCodingAPIKey)
             .success(function(result) {
@@ -119,6 +121,8 @@ $scope.GeoCodingAPIKey = '93d639c2f2e101a955c9dd2ec8704fca';
               $http.get('http://api.postoncloud.com/api/ShipMart/AddCurrentUSerLocation?UserId=' + UserIdStorageService.getAll()[0] + '&Latitude=' + $scope.lat + '&Longlatitude=' + $scope.lng + '&Status=5&Type=1&CreatedBy=1')
                 .success(function(miniresult) {
                   $scope.result = 'Location Sent to Server';
+                  $ionicLoading.hide();
+                  $scope.$broadcast('scroll.refreshComplete');
                 });
             })
         }, function(err) {
@@ -136,7 +140,7 @@ $scope.GeoCodingAPIKey = '93d639c2f2e101a955c9dd2ec8704fca';
     });
   };
 
-  
+
 
   var location = {
     lat: null,
@@ -154,7 +158,8 @@ $scope.GeoCodingAPIKey = '93d639c2f2e101a955c9dd2ec8704fca';
     }
   });
 
-$scope.items = Items;
+  $scope.items = Items;
+
   // Items.$watch(function(event) {
   //     if (Items[0].pickers[0].userid === UserIdStorageService.getAll()[0]) {
   //       $cordovaLocalNotification.add({
@@ -186,27 +191,75 @@ $scope.items = Items;
   //     }
   // });
 
+  Items.$watch(function(event) {
+    if (event.event === 'child_added' && Items[Items.$indexFor(event.key)].currentPicker === UserIdStorageService.getAll()[0]) {
+      $cordovaLocalNotification.add({
+        id: Items[Items.$indexFor(event.key)].orignalBody.shipmentId,
+        date: new Date(),
+        message: Items[Items.$indexFor(event.key)].orignalBody.pickupAddress,
+        title: Items[Items.$indexFor(event.key)].orignalBody.itemName,
+        autoCancel: true,
+        sound: null
+      }).then(function() {
+        console.log("The notification has been set");
+
+
+        for (var i = 0; i < Items[Items.$indexFor(event.key)].pickers.length; i++) {
+          roamingTimeout = setTimeout(function(i, Items, event) {
+            if (Items[Items.$indexFor(event.key)].pickedBy == null) {
+              Items[Items.$indexFor(event.key)].currentPicker = Items[Items.$indexFor(event.key)].orignalBody.availabeExecutives[Items[Items.$indexFor(event.key)].currentPickerIndex + 1].userid;
+              Items[Items.$indexFor(event.key)].currentPickerIndex++;
+              Items.$save(Items.$indexFor(event.key)).then(function(ref) {
+                ref.key() === Items[Items.$indexFor(event.key)].$id;
+              });
+            } else {
+              return;
+            }
+          }, 30000, i, Items, event);
+
+        }
+      });
+    }
+  });
+
   $scope.accept = function(result) {
     OrderStorageService.removeAll();
     OrderStorageService.add(result);
-    console.log(Items.$indexFor(result));
+    Items[Items.$indexFor(result)].pickedBy = UserIdStorageService.getAll()[0];
+    Items[Items.$indexFor(result)].currentPicker = "-1";
+    Items.$save(Items.$indexFor(result)).then(function(ref) {
+      ref.key() === Items[Items.$indexFor(result)].$id;
+    });
     $state.go('app.tracker');
-  //   //adaNameRef.set({ first: 'Ada', last: 'Lovelace' })
-  // .then(function() {
-  //   console.log('Synchronization succeeded');
-  // })
-  // .catch(function(error) {
-  //   console.log('Synchronization failed');
-  // });
+  }
+
+  $scope.reject = function(result) {
+    if (Items[Items.$indexFor(result)].currentPickerIndex == (Items[Items.$indexFor(result)].pickers.length - 1)) {
+      return;
+    } else {
+      Items[Items.$indexFor(result)].currentPicker = Items[Items.$indexFor(result)].orignalBody.availabeExecutives[currentPickerIndex + 1].userid;
+      Items[Items.$indexFor(result)].currentPickerIndex++;
+      Items.$save(Items.$indexFor(result)).then(function(ref) {
+        ref.key() === Items[Items.$indexFor(result)].$id;
+      });
+    }
+  }
+
+  $scope.isCurrentPicker = function(item) {
+    return Items[Items.$indexFor(item)].currentPicker == UserIdStorageService.getAll()[0];
+  }
+
+  $scope.isPickedByHim = function(item) {
+    return Items[Items.$indexFor(item)].pickedBy == UserIdStorageService.getAll()[0];
   }
 
 })
 
-.controller('OrderCtrl',function($scope, $state){
-    $scope.item = $state.params.item;
+.controller('OrderCtrl', function($scope, $state) {
+  $scope.item = $state.params.item;
 })
 
-.controller('TrackerCtrl', function($scope, UserStorageService, UserIdStorageService,$state, $ionicNavBarDelegate, OrderStorageService, $http) {
+.controller('TrackerCtrl', function($scope, UserStorageService, UserIdStorageService, $state, $ionicNavBarDelegate, OrderStorageService, $http) {
   $scope.ct = 1;
   var colorArr = ['button-assertive', 'button-positive', 'button-balanced', 'button-calm', 'button-energized'];
   var percentArr = [0, 50, 100];
@@ -219,7 +272,7 @@ $scope.items = Items;
     $scope.item = OrderStorageService.getAll()[0];
     $scope.value = percentArr[0];
     $scope.statusColor = colorArr[0];
-    $scope.buttonText =statusTextArr[1];
+    $scope.buttonText = statusTextArr[1];
     $scope.statusText = statusTextArr[0];
   }
 
