@@ -211,7 +211,7 @@ $scope.items = Items;
   $scope.item = $state.params.item;
   $scope.accept = function(result) {
     OrderStorageService.removeAll();
-    OrderStorageService.add(Items[Items.$indexFor(result)].orignalBody);
+    OrderStorageService.add(result);
     Items[Items.$indexFor(result)].pickedBy = UserIdStorageService.getAll()[0];
     Items[Items.$indexFor(result)].currentPicker = "-1";
     Items.$save(Items.$indexFor(result)).then(function(ref) {
