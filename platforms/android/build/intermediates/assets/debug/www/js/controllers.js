@@ -211,7 +211,7 @@ $scope.items = Items;
   $scope.item = $state.params.item;
   $scope.accept = function(result) {
     OrderStorageService.removeAll();
-    OrderStorageService.add(result);
+    OrderStorageService.add(Items[Items.$indexFor(result)].orignalBody);
     Items[Items.$indexFor(result)].pickedBy = UserIdStorageService.getAll()[0];
     Items[Items.$indexFor(result)].currentPicker = "-1";
     Items.$save(Items.$indexFor(result)).then(function(ref) {
@@ -237,6 +237,7 @@ $scope.items = Items;
   $scope.ct = 1;
   var colorArr = ['button-assertive', 'button-positive', 'button-balanced', 'button-calm', 'button-energized'];
   var percentArr = [0, 50, 100];
+  var classChanger = [''];
   var statusTextArr = ['Assigned', 'Reach Vendor Premises', 'Picked from Vendor', 'Reached Customer Premises', 'Delievered', null];
 
   if (OrderStorageService.getAll().length == 0) {
@@ -268,6 +269,13 @@ $scope.items = Items;
         });
       });
 
+  }
+
+
+  $scope.changeClass = function(status){
+    if(status==$scope.ct){
+      return 'positive';
+    }
   }
 
 });
