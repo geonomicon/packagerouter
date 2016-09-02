@@ -63,10 +63,33 @@ angular.module('packagerouter', ['ionic','ionic.service.core','ngCordova','ngSto
   })
   .state('app.location', {
     url: '/sendlocation',
+      params: {isAccepted: false, isRejected: false, isOrder: false},
     views: {
       'menuContent': {
         templateUrl: 'templates/location.html',
         controller: 'LocationCtrl'
+      }
+    }
+  })
+
+  .state('app.accepted', {
+    url: '/acceptedorder',
+    params: {myParam: null},
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/accepted.html',
+        controller: 'acceptedCtrl'
+      }
+    }
+  })
+
+  .state('app.rejected', {
+    url: '/rejectedorder',
+    params: {myParam: null},
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/rejected.html',
+        controller: 'RejectedCtrl'
       }
     }
   });

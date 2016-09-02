@@ -27,6 +27,12 @@
         <ion-item menu-close href="#/app/tracker">
           Tracking
         </ion-item>
+        <ion-item menu-close ng-click="acceptedOr(true)">
+          Accepted
+        </ion-item>
+        <ion-item menu-close ng-click="rejectedOr(true)">
+          Rejected
+        </ion-item>
         <ion-item menu-close href="" ng-click="doLogout()" ng-show="isLoggedIn">
           Logout {{loggedIn}}
         </ion-item>

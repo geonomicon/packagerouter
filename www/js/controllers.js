@@ -26,6 +26,18 @@ angular.module('packagerouter.controllers', [])
       });
 
   };
+  $scope.acceptedOr = function(true) {
+    $state.go('app.order', {
+      isAccepted: true
+    });
+  }
+
+  $scope.rejectedOr = function(true) {
+    $state.go('app.order', {
+      isRejected: true
+    });
+  }
+
 })
 
 //Login
@@ -71,7 +83,8 @@ $ionicSideMenuDelegate.canDragContent(false);
 .controller('LocationCtrl', function($scope, UserIdStorageService, UserStorageService, $state, $ionicNavBarDelegate,
   $cordovaGeolocation, $ionicLoading, $http, LocationStorageService, OrderStorageService, $cordovaLocalNotification, Items) {
 
-
+$scope.isAccepted = $state.params.isAccepted;
+$scope.isRejected = $state.params.isRejected;
   // $cordovaLocalNotification.add({
   //   id: 1,
   //   date: new Date(),

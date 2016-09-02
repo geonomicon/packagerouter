@@ -43,17 +43,7 @@ Orders:
     </div>
 <<<<<<< HEAD
   </ion-list>-->
-  <div class="list">
-
-  <div class="item item-divider">
-    Location
-  </div>
-  <a class="item" href="#">
-    Lat: {{lat}}
-  </a>
-  <a class="item" href="#">
-    Long: {{lng}}
-  </a>
+  <div class="list" ng-show="isAccepted(true)">
   <div class="item item-divider">
    Accepted Orders
   </div>
@@ -62,6 +52,18 @@ Orders:
    {{item.orignalBody.itemName}}
   </a>
   </div>
+</div>
+<div class="list" ng-show= "isRejected(true)">
+  <div class="item item-divider">
+   Rejected Orders
+  </div>
+  <div  ng-repeat='item in items' ng-show="!isPickedByHim(item.$id)&&!isCurrentPicker(item.$id)">
+  <a class="item" ng-click='ordersList(item)'  >
+   {{item.orignalBody.itemName}}
+  </a>
+  </div>
+</div>
+<div class="list">
   <div class="item item-divider">
    Orders
  </div>
