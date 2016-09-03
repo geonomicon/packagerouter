@@ -2,82 +2,33 @@
   <ion-content>
     <ion-refresher pulling-text="Pull to refresh..." on-refresh="refreshLocation()">
     </ion-refresher>
-    <!--<div class="card">
-      <div class="item item-divider">
-        Your Current Location
-      </div>
-      <div class="item item-text-wrap">
-        <div class="row latlngcard">
-          <div class="col">Lat</div>
-          <div class="col">Lng</div>
-        </div>
-        <div class="row latlngcard">
-          <div class="col">{{lat}}</div>
-          <div class="col">{{lng}}</div>
-        </div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="item item-divider">
-        Address
-      </div>
-      <div class="item item-text-wrap">
-        {{address}}
-      </div>
-<<<<<<< HEAD
-<<<<<<< HEAD
-    </div>-->
-    <!--<div class="card">
-=======
-    </div>
+    <div class="list">
 
-Orders:
-<div class="card" ng-repeat="item in items" ng-show="isCurrentPicker(item.$id)">
->>>>>>> 3c71bc70e3dbb6479537902483ef27e32b088744
       <div class="item item-divider">
-        Result
+        Location
       </div>
-      <div class="item item-text-wrap">
-        {{result}}
-      </div>
-    </div>
-<<<<<<< HEAD
-  </ion-list>-->
-  <div class="list">
-
-  <div class="item item-divider">
-    Location
-  </div>
-  <a class="item" href="#">
+      <a class="item" href="#">
     Lat: {{lat}}
   </a>
-  <a class="item" href="#">
+      <a class="item" href="#">
     Long: {{lng}}
   </a>
-  <div class="item item-divider">
-   Accepted Orders
-  </div>
-  <div  ng-repeat='item in items' ng-show="isPickedByHim(item.$id)">
-  <a class="item" ng-click='ordersList(item)'  >
-   {{item.orignalBody.itemName}}
-  </a>
-  </div>
-  <div class="item item-divider">
-   Orders
- </div>
- <div  ng-repeat='item in items' ng-show="isCurrentPicker(item.$id)">
- <a class="item" ng-click='ordersList(item)'  >
-  {{item.orignalBody.itemName}}
- </a>
- </div>
-
+      <div class="item item-divider">
+        Accepted Orders
+      </div>
+      <div ng-repeat='item in items' ng-show="isPickedByHim(item.$id)">
+        <a class="item">
+            {{item.orignalBody.itemName}}
+        </a>
+      </div>
+      <div class="item item-divider">
+        Orders
+      </div>
+      <div ng-repeat='item in items' ng-show="isCurrentPicker(item.$id)">
+        <a class="item" ng-click='ordersList(item)'>
+          {{item.orignalBody.itemName}}
+        </a>
+      </div>
     </div>
-
-
-
-
-
-
-
   </ion-content>
 </ion-view>

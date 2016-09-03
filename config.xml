@@ -1,15 +1,20 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget id="com.tyrannodrake.packagerouter" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>packagerouter</name>
-    <description>
-        Some Package Routin System. Don't have much idea but let's see.
+    <description>
+
+        Some Package Routin System. Don't have much idea but let's see.
+
     </description>
-    <author email="lunasunkaiser@gmail.com" href="http://rajatsharma.rocks/">
-      Rajat Sharma
+    <author email="lunasunkaiser@gmail.com" href="http://rajatsharma.rocks/">
+
+      Rajat Sharma
+
     </author>
     <content src="index.html" />
     <access origin="*" />
     <allow-navigation href="*" />
+    <access origin="tel:*" launch-external="yes"/>
     <preference name="webviewbounce" value="false" />
     <preference name="UIWebViewBounce" value="false" />
     <preference name="DisallowOverscroll" value="true" />

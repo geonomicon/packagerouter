@@ -1,9 +1,9 @@
-<ion-view view-title="order">
+<ion-view view-title="Order Details">
   <ion-content>
 
     <div class="card">
 
-    <div class="item item-text-wrap">
+      <div class="item item-text-wrap">
 
         <div class="row">
           <div class="col">Delivery Add</div>
@@ -12,6 +12,20 @@
         <div class="row">
           <div class="col">Pickup Add</div>
           <div class="col">{{item.orignalBody.pickupAddress}}</div>
+        </div>
+        <div class="item item-divider">
+         <i class="icon ion-person"></i> Call Customer/Vendor
+        </div>
+        <div class="row">
+          <div class="col">
+          <a class="button button-block button-outline button-positive icon-left ion-ios-telephone" ng-href="tel:{{item.orignalBody.customerPhoneNo}}">Call Customer</a>
+          </div>
+          <div class="col">
+            <a class="button button-block button-outline button-positive icon-left ion-ios-telephone" ng-href="tel:{{item.orignalBody.vendorPhoneNo}}">Call Vendor</a>
+        </div>
+        </div>
+        <div class="item item-divider">
+          <i class="icon ion-paper-airplane"></i> Accept/Reject Order
         </div>
         <div class="row">
           <div class="col">
@@ -30,10 +44,6 @@
       <div class="item item-divider">
         TimeSlot : {{item.orignalBody.timeSlot}}
       </div>
-
-      </div>
-
-
-
+    </div>
   </ion-content>
 </ion-view>

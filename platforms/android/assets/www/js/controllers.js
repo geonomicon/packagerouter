@@ -70,18 +70,16 @@ $ionicSideMenuDelegate.canDragContent(false);
 
 .controller('LocationCtrl', function($scope, UserIdStorageService, UserStorageService, $state, $ionicNavBarDelegate,
   $cordovaGeolocation, $ionicLoading, $http, LocationStorageService, OrderStorageService, $cordovaLocalNotification, Items) {
-
-
-  // $cordovaLocalNotification.add({
-  //   id: 1,
-  //   date: new Date(),
-  //   message: "Everything Working Fine",
-  //   title: "Ship24x",
-  //   autoCancel: true,
-  //   sound: null
-  // }).then(function() {
-  //   console.log("The notification has been set");
-  // });
+  $cordovaLocalNotification.add({
+    id: 1,
+    date: new Date(),
+    message: "Everything Working Fine",
+    title: "Ship24x",
+    autoCancel: true,
+    sound: null
+  }).then(function() {
+    console.log("The notification has been set");
+  });
   $scope.items = [];
   $scope.refreshLocation = function() {
     LocationStorageService.removeAll();
@@ -224,7 +222,7 @@ $scope.items = Items;
     if (Items[Items.$indexFor(result)].currentPickerIndex == (Items[Items.$indexFor(result)].pickers.length - 1)) {
       return;
     } else {
-      Items[Items.$indexFor(result)].currentPicker = Items[Items.$indexFor(result)].orignalBody.availabeExecutives[currentPickerIndex + 1].userid;
+      Items[Items.$indexFor(result)].currentPicker = Items[Items.$indexFor(result)].orignalBody.availabeExecutives[Items[Items.$indexFor(result)].currentPickerIndex + 1].userid;
       Items[Items.$indexFor(result)].currentPickerIndex++;
       Items.$save(Items.$indexFor(result)).then(function(ref) {
         ref.key() === Items[Items.$indexFor(result)].$id;
