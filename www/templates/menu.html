@@ -21,13 +21,19 @@
         <ion-item menu-close href="#/app/login" ng-hide="isLoggedIn">
           Login
         </ion-item>
-        <ion-item menu-close href="#/app/location">
-          Location & Orders
+        <ion-item menu-close ng-click="normalOr()">
+          Available Orders
         </ion-item>
         <ion-item menu-close href="#/app/tracker">
           Tracking
         </ion-item>
-        <ion-item menu-close href="" ng-click="doLogout()" ng-show="isLoggedIn">
+        <ion-item menu-close ng-click="acceptedOr()">
+          Accepted Orders
+        </ion-item>
+        <ion-item menu-close ng-click="rejectedOr()">
+          Rejected Orders
+        </ion-item>
+        <ion-item menu-close ng-click="doLogout()" ng-show="isLoggedIn">
           Logout {{loggedIn}}
         </ion-item>
       </ion-list>

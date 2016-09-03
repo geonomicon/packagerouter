@@ -2,33 +2,35 @@
   <ion-content>
     <ion-refresher pulling-text="Pull to refresh..." on-refresh="refreshLocation()">
     </ion-refresher>
-    <div class="list">
-
-      <div class="item item-divider">
-        Location
-      </div>
-      <a class="item" href="#">
-    Lat: {{lat}}
+  <div class="list" ng-show="isAccepted">
+  <div class="item item-divider">
+   Accepted Orders
+  </div>
+  <div  ng-repeat='item in items' ng-show="isPickedByHim(item.$id)">
+  <a class="item" ng-click='ordersList(item)'>
+   {{item.orignalBody.itemName}}
   </a>
-      <a class="item" href="#">
-    Long: {{lng}}
+  </div>
+</div>
+<div class="list" ng-show="isRejected">
+  <div class="item item-divider">
+   Rejected Orders
+  </div>
+  <div  ng-repeat='item in items' ng-show="!isPickedByHim(item.$id)&&!isCurrentPicker(item.$id)">
+  <a class="item" ng-click='ordersList(item)'>
+   {{item.orignalBody.itemName}}
   </a>
-      <div class="item item-divider">
-        Accepted Orders
-      </div>
-      <div ng-repeat='item in items' ng-show="isPickedByHim(item.$id)">
-        <a class="item">
-            {{item.orignalBody.itemName}}
-        </a>
-      </div>
-      <div class="item item-divider">
-        Orders
-      </div>
-      <div ng-repeat='item in items' ng-show="isCurrentPicker(item.$id)">
-        <a class="item" ng-click='ordersList(item)'>
-          {{item.orignalBody.itemName}}
-        </a>
-      </div>
-    </div>
+  </div>
+</div>
+<div class="list" ng-show="isNormalOr">
+  <div class="item item-divider">
+   Orders
+ </div>
+ <div  ng-repeat='item in items' ng-show="isCurrentPicker(item.$id)">
+ <a class="item" ng-click='ordersList(item)'>
+  {{item.orignalBody.itemName}}
+ </a>
+ </div>
+</div>
   </ion-content>
 </ion-view>

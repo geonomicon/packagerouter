@@ -26,6 +26,27 @@ angular.module('packagerouter.controllers', [])
       });
 
   };
+  $scope.acceptedOr = function() {
+    $state.go('app.location', {
+      isAccepted: true,
+      isRejected: false, isOrder: false
+    });
+  }
+
+$scope.normalOr = function() {
+    $state.go('app.location', {
+      isAccepted: false,
+      isRejected: false, isOrder: true
+    });
+  }
+
+  $scope.rejectedOr = function() {
+    $state.go('app.location', {
+      isAccepted: false,
+      isRejected: true, isOrder: false
+    });
+  }
+
 })
 
 //Login
@@ -80,6 +101,11 @@ $ionicSideMenuDelegate.canDragContent(false);
   }).then(function() {
     console.log("The notification has been set");
   });
+
+$scope.isAccepted = $state.params.isAccepted;
+$scope.isRejected = $state.params.isRejected;
+$scope.isNormalOr =  $state.params.isOrder;
+
   $scope.items = [];
   $scope.refreshLocation = function() {
     LocationStorageService.removeAll();
