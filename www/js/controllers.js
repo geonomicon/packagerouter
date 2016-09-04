@@ -254,6 +254,10 @@ $scope.items = Items;
         ref.key() === Items[Items.$indexFor(result)].$id;
       });
     }
+    $state.go('app.location', {
+      isAccepted: false,
+      isRejected: true, isOrder: false
+    });
   }
 })
 
