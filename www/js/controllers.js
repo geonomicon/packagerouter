@@ -246,7 +246,11 @@ $scope.items = Items;
 
   $scope.reject = function(result) {
     if (Items[Items.$indexFor(result)].currentPickerIndex == (Items[Items.$indexFor(result)].pickers.length - 1)) {
-      return;
+      $state.go('app.location', {
+        isAccepted: false,
+        isRejected: true, isOrder: false
+      });
+    //  return;
     } else {
       Items[Items.$indexFor(result)].currentPicker = Items[Items.$indexFor(result)].orignalBody.availabeExecutives[Items[Items.$indexFor(result)].currentPickerIndex + 1].userid;
       Items[Items.$indexFor(result)].currentPickerIndex++;
@@ -254,10 +258,7 @@ $scope.items = Items;
         ref.key() === Items[Items.$indexFor(result)].$id;
       });
     }
-    $state.go('app.location', {
-      isAccepted: false,
-      isRejected: true, isOrder: false
-    });
+
   }
 })
 
@@ -302,7 +303,7 @@ $scope.items = Items;
 
   $scope.changeClass = function(status){
     if(status==$scope.ct){
-      return 'positive';
+      return 'energized';
     }
   }
 
