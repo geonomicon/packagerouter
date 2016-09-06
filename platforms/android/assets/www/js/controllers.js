@@ -252,12 +252,13 @@ $scope.items = Items;
       Items[Items.$indexFor(result)].currentPickerIndex++;
       Items.$save(Items.$indexFor(result)).then(function(ref) {
         ref.key() === Items[Items.$indexFor(result)].$id;
+        $state.go('app.location', {
+        isAccepted: false,
+        isRejected: true, isOrder: false
+      });
       });
     }
-    $state.go('app.location', {
-      isAccepted: false,
-      isRejected: true, isOrder: false
-    });
+
   }
 })
 
@@ -266,7 +267,7 @@ $scope.items = Items;
   var colorArr = ['button-assertive', 'button-positive', 'button-balanced', 'button-calm', 'button-energized'];
   var percentArr = [0, 50, 100];
   var classChanger = [''];
-  var statusTextArr = ['Assigned', 'Reach Vendor Premises', 'Picked from Vendor', 'Reached Customer Premises', 'Delievered', null];
+  var statusTextArr = ['Assigned', 'Reached Vendor', 'Picked from Vendor', 'Reached Customer Premises', 'Delievered', null];
 
   if (OrderStorageService.getAll().length == 0) {
     $scope.rangeColorPainters = 'range-royal';
@@ -281,7 +282,7 @@ $scope.items = Items;
 
   $scope.updateStatus = function() {
 
-    $http.get('http://api.postoncloud.com/api/ShipMart/AddShipmentTracking?ShipmentID=' + $scope.item.shipmentId + '&AssignTo=' + UserIdStorageService.getAll()[0] + '&Status=' + ($scope.ct + 1))
+    $http.get('http://api.postoncloud.com/api/ShipMart/AddShipmentTracking?ShipmentID=' + $scope.item.shipmentId + '&AssignTo=' + UserIdStorageService.getAll()[0] + '&Status=' + $scope.statusText[($scope.ct + 1)])
       .success(function(result) {
         console.log(result);
         $scope.ct++;
