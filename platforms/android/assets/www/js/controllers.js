@@ -246,11 +246,7 @@ $scope.items = Items;
 
   $scope.reject = function(result) {
     if (Items[Items.$indexFor(result)].currentPickerIndex == (Items[Items.$indexFor(result)].pickers.length - 1)) {
-      $state.go('app.location', {
-        isAccepted: false,
-        isRejected: true, isOrder: false
-      });
-    //  return;
+      return;
     } else {
       Items[Items.$indexFor(result)].currentPicker = Items[Items.$indexFor(result)].orignalBody.availabeExecutives[Items[Items.$indexFor(result)].currentPickerIndex + 1].userid;
       Items[Items.$indexFor(result)].currentPickerIndex++;
@@ -271,22 +267,23 @@ $scope.items = Items;
   var colorArr = ['button-assertive', 'button-positive', 'button-balanced', 'button-calm', 'button-energized'];
   var percentArr = [0, 50, 100];
   var classChanger = [''];
-  var statusTextArr = ['Assigned', 'Reached Vendor', 'Picked from Vendor', 'Reached Customer Premises', 'Delievered', null];
+  var statusTextArr = ['Accepted', 'Reached Vendor', 'Picked from Vendor', 'Reached Customer Premises', 'Delievered', null];
 
   if (OrderStorageService.getAll().length == 0) {
     $scope.rangeColorPainters = 'range-royal';
     $scope.nothingToSeeHere = true;
   } else {
     $scope.item = OrderStorageService.getAll()[0];
+    console.log($scope.item);
     $scope.value = percentArr[0];
     $scope.statusColor = colorArr[0];
     $scope.buttonText = statusTextArr[1];
-    $scope.statusText = statusTextArr[0];
+    $scope.statusText = statusTextArr[$scope.ct];
   }
 
   $scope.updateStatus = function() {
 
-    $http.get('http://api.postoncloud.com/api/ShipMart/AddShipmentTracking?ShipmentID=' + $scope.item.shipmentId + '&AssignTo=' + UserIdStorageService.getAll()[0] + '&Status=' + $scope.statusText[($scope.ct + 1)])
+    $http.get('http://api.postoncloud.com/api/ShipMart/AddShipmentTracking?ShipmentID=' + $scope.item.ShipmentId + '&AssignTo=' + UserIdStorageService.getAll()[0] + '&Status=' + $scope.statusText)
       .success(function(result) {
         console.log(result);
         $scope.ct++;
