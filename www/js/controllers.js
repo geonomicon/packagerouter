@@ -29,29 +29,32 @@ angular.module('packagerouter.controllers', [])
   $scope.acceptedOr = function() {
     $state.go('app.location', {
       isAccepted: true,
-      isRejected: false, isOrder: false
+      isRejected: false,
+      isOrder: false
     });
   }
 
-$scope.normalOr = function() {
+  $scope.normalOr = function() {
     $state.go('app.location', {
       isAccepted: false,
-      isRejected: false, isOrder: true
+      isRejected: false,
+      isOrder: true
     });
   }
 
   $scope.rejectedOr = function() {
     $state.go('app.location', {
       isAccepted: false,
-      isRejected: true, isOrder: false
+      isRejected: true,
+      isOrder: false
     });
   }
 
 })
 
 //Login
-.controller('LoginCtrl', function($scope,$ionicSideMenuDelegate, UserIdStorageService, UserStorageService, $state, $ionicNavBarDelegate, $ionicLoading, $http) {
-$ionicSideMenuDelegate.canDragContent(false);
+.controller('LoginCtrl', function($scope, $ionicSideMenuDelegate, UserIdStorageService, UserStorageService, $state, $ionicNavBarDelegate, $ionicLoading, $http) {
+  $ionicSideMenuDelegate.canDragContent(false);
   $ionicNavBarDelegate.showBackButton(false);
   $scope.animateClass = 'button-positive';
 
@@ -102,9 +105,9 @@ $ionicSideMenuDelegate.canDragContent(false);
     console.log("The notification has been set");
   });
 
-$scope.isAccepted = $state.params.isAccepted;
-$scope.isRejected = $state.params.isRejected;
-$scope.isNormalOr =  $state.params.isOrder;
+  $scope.isAccepted = $state.params.isAccepted;
+  $scope.isRejected = $state.params.isRejected;
+  $scope.isNormalOr = $state.params.isOrder;
 
   $scope.items = [];
   $scope.refreshLocation = function() {
@@ -186,7 +189,7 @@ $scope.isNormalOr =  $state.params.isOrder;
 
 
 
-$scope.items = Items;
+  $scope.items = Items;
 
   Items.$watch(function(event) {
     if (event.event === 'child_added' && Items[Items.$indexFor(event.key)].currentPicker === UserIdStorageService.getAll()[0]) {
@@ -231,7 +234,7 @@ $scope.items = Items;
 
 })
 
-.controller('OrderCtrl', function($scope, $state,Items,UserIdStorageService, OrderStorageService) {
+.controller('OrderCtrl', function($scope, $state, Items, UserIdStorageService, OrderStorageService) {
   $scope.item = $state.params.item;
   $scope.accept = function(result) {
     OrderStorageService.removeAll();
@@ -253,9 +256,10 @@ $scope.items = Items;
       Items.$save(Items.$indexFor(result)).then(function(ref) {
         ref.key() === Items[Items.$indexFor(result)].$id;
         $state.go('app.location', {
-        isAccepted: false,
-        isRejected: true, isOrder: false
-      });
+          isAccepted: false,
+          isRejected: true,
+          isOrder: false
+        });
       });
     }
 
@@ -264,47 +268,54 @@ $scope.items = Items;
 
 .controller('TrackerCtrl', function($scope, UserStorageService, UserIdStorageService, $state, $ionicNavBarDelegate, OrderStorageService, $http) {
   $scope.ct = 1;
-  var colorArr = ['button-assertive', 'button-positive', 'button-balanced', 'button-calm', 'button-energized'];
-  var percentArr = [0, 50, 100];
-  var classChanger = [''];
-  var statusTextArr = ['Assigned', 'Reached Vendor', 'Picked from Vendor', 'Reached Customer Premises', 'Delievered', null];
+  $http.get('http://api.postoncloud.com/api/ShipMart/AddShipmentTracking?ShipmentID=' + $scope.item.ShipmentId + '&AssignTo=' + UserIdStorageService.getAll()[0] + '&Status=' + "Accepted")
+    .success(function(result) {
+      viewTracking();
+    });
 
-  if (OrderStorageService.getAll().length == 0) {
-    $scope.rangeColorPainters = 'range-royal';
-    $scope.nothingToSeeHere = true;
-  } else {
-    $scope.item = OrderStorageService.getAll()[0];
-    $scope.value = percentArr[0];
-    $scope.statusColor = colorArr[0];
-    $scope.buttonText = statusTextArr[1];
-    $scope.statusText = statusTextArr[0];
-  }
+  function viewTracking() {
+    var colorArr = ['button-assertive', 'button-positive', 'button-balanced', 'button-calm', 'button-energized'];
+    var percentArr = [0, 50, 100];
+    var classChanger = [''];
+    var statusTextArr = ['Accepted', 'Reached Vendor', 'Picked from Vendor', 'Reached Customer Premises', 'Delievered', null];
 
-  $scope.updateStatus = function() {
+    if (OrderStorageService.getAll().length == 0) {
+      $scope.rangeColorPainters = 'range-royal';
+      $scope.nothingToSeeHere = true;
+    } else {
+      $scope.item = OrderStorageService.getAll()[0];
+      console.log($scope.item);
+      $scope.value = percentArr[0];
+      $scope.statusColor = colorArr[0];
+      $scope.buttonText = statusTextArr[1];
+      $scope.statusText = statusTextArr[$scope.ct];
+    }
 
-    $http.get('http://api.postoncloud.com/api/ShipMart/AddShipmentTracking?ShipmentID=' + $scope.item.shipmentId + '&AssignTo=' + UserIdStorageService.getAll()[0] + '&Status=' + $scope.statusText[($scope.ct + 1)])
-      .success(function(result) {
-        console.log(result);
-        $scope.ct++;
-        $scope.value = percentArr[$scope.ct];
-        $scope.statusColor = colorArr[$scope.ct];
-        $scope.buttonText = statusTextArr[$scope.ct + 1];
-        $scope.statusText = statusTextArr[$scope.ct];
-        if ($scope.buttonText == null) {
-          $scope.isDelivered = true;
-        }
-        $state.go($state.current, {}, {
-          reload: true
+    $scope.updateStatus = function() {
+
+      $http.get('http://api.postoncloud.com/api/ShipMart/AddShipmentTracking?ShipmentID=' + $scope.item.ShipmentId + '&AssignTo=' + UserIdStorageService.getAll()[0] + '&Status=' + $scope.statusText)
+        .success(function(result) {
+          console.log(result);
+          $scope.ct++;
+          $scope.value = percentArr[$scope.ct];
+          $scope.statusColor = colorArr[$scope.ct];
+          $scope.buttonText = statusTextArr[$scope.ct + 1];
+          $scope.statusText = statusTextArr[$scope.ct];
+          if ($scope.buttonText == null) {
+            $scope.isDelivered = true;
+          }
+          $state.go($state.current, {}, {
+            reload: true
+          });
         });
-      });
 
-  }
+    }
 
 
-  $scope.changeClass = function(status){
-    if(status==$scope.ct){
-      return 'energized';
+    $scope.changeClass = function(status) {
+      if (status == $scope.ct) {
+        return 'energized';
+      }
     }
   }
-
 });

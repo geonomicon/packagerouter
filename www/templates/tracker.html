@@ -2,11 +2,11 @@
   <ion-content>
     <div class="card">
    <div class="item item-text-wrap">
-    <i class="icon ion-person" ng-class= "changeClass(0)" style="left: 1%; position: relative; font-size: 35px"></i>
-    <i class="icon ion-home" ng-class= "changeClass(1)" style="left:11%; position: relative; font-size: 35px"></i>
-    <i class="icon ion-android-cart" ng-class= "changeClass(2)" style="left: 22%; position: relative; font-size: 35px"></i>
-    <i class="icon ion-android-person" ng-class= "changeClass(3)" style="left: 35%; position: relative; font-size: 35px"></i>
-    <i class="icon ion-bag" ng-class= "changeClass(4)" style="left: 46%; position: relative; font-size: 35px"></i>
+    <i class="icon ion-person" ng-class= "changeClass(1)" style="left: 1%; position: relative; font-size: 35px"></i>
+    <i class="icon ion-home" ng-class= "changeClass(2)" style="left:11%; position: relative; font-size: 35px"></i>
+    <i class="icon ion-android-cart" ng-class= "changeClass(3)" style="left: 22%; position: relative; font-size: 35px"></i>
+    <i class="icon ion-android-person" ng-class= "changeClass(4)" style="left: 35%; position: relative; font-size: 35px"></i>
+    <i class="icon ion-bag" ng-class= "changeClass(5)" style="left: 46%; position: relative; font-size: 35px"></i>
    </div>
  </div>
 
@@ -43,6 +43,14 @@
       <div class="item item-text-wrap">
         Click any orders to accept
       </div>
+    </div>
+    <div class="row">
+      <div class="col">
+      <a class="button button-block button-outline button-positive icon-left ion-ios-telephone" ng-href="tel:{{item.CustomerPhoneNo}}">Customer</a>
+      </div>
+      <div class="col">
+        <a class="button button-block button-outline button-positive icon-left ion-ios-telephone" ng-href="tel:{{item.VendorPhoneNo}}">Vendor</a>
+    </div>
     </div>
   </ion-content>
 </ion-view>

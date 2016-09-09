@@ -1,4 +1,4 @@
-<ion-view view-title="Location">
+<ion-view view-title="Available Orders">
   <ion-content>
     <ion-refresher pulling-text="Pull to refresh..." on-refresh="refreshLocation()">
     </ion-refresher>
@@ -7,7 +7,7 @@
    Accepted Orders
   </div>
   <div  ng-repeat='item in items' ng-show="isPickedByHim(item.$id)">
-  <a class="item" ng-click='ordersList(item)'>
+  <a class="item" >
    {{item.orignalBody.itemName}}
   </a>
   </div>
@@ -17,7 +17,7 @@
    Rejected Orders
   </div>
   <div  ng-repeat='item in items' ng-show="!isPickedByHim(item.$id)&&!isCurrentPicker(item.$id)">
-  <a class="item" ng-click='ordersList(item)'>
+  <a class="item" >
    {{item.orignalBody.itemName}}
   </a>
   </div>
