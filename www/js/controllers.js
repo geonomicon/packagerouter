@@ -268,11 +268,20 @@ angular.module('packagerouter.controllers', [])
 
 .controller('TrackerCtrl', function($scope, UserStorageService, UserIdStorageService, $state, $ionicNavBarDelegate, OrderStorageService, $http) {
   $scope.ct = 1;
+  if(OrderStorageService.getAll().length > 0 ){
   $http.get('http://api.postoncloud.com/api/ShipMart/AddShipmentTracking?ShipmentID=' + $scope.item.ShipmentId + '&AssignTo=' + UserIdStorageService.getAll()[0] + '&Status=' + "Accepted")
     .success(function(result) {
       viewTracking();
     });
+}
+else{
+  $state.go('app.location', {
+    isAccepted: false,
+    isRejected: false,
+    isOrder: true
+  });
 
+}
   function viewTracking() {
     var colorArr = ['button-assertive', 'button-positive', 'button-balanced', 'button-calm', 'button-energized'];
     var percentArr = [0, 50, 100];
