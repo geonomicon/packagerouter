@@ -269,7 +269,7 @@ angular.module('packagerouter.controllers', [])
 .controller('TrackerCtrl', function($scope, UserStorageService, UserIdStorageService, $state, $ionicNavBarDelegate, OrderStorageService, $http) {
   $scope.ct = 1;
   if(OrderStorageService.getAll().length > 0 ){
-  $http.get('http://api.postoncloud.com/api/ShipMart/AddShipmentTracking?ShipmentID=' + $scope.item.ShipmentId + '&AssignTo=' + UserIdStorageService.getAll()[0] + '&Status=' + "Accepted")
+  $http.get('http://api.postoncloud.com/api/ShipMart/AddShipmentTracking?ShipmentID=' + OrderStorageService.getAll()[0].ShipmentId + '&AssignTo=' + UserIdStorageService.getAll()[0] + '&Status=' + "Accepted")
     .success(function(result) {
       viewTracking();
     });
@@ -286,7 +286,7 @@ else{
     var colorArr = ['button-assertive', 'button-positive', 'button-balanced', 'button-calm', 'button-energized'];
     var percentArr = [0, 50, 100];
     var classChanger = [''];
-    var statusTextArr = ['Accepted', 'Reached Vendor', 'Picked from Vendor', 'Reached Customer Premises', 'Delievered', null];
+    var statusTextArr = ['Accepted', 'Reached Vendor', 'Picked from Vendor', 'Reached Customer Premises', 'Delivered', null];
 
     if (OrderStorageService.getAll().length == 0) {
       $scope.rangeColorPainters = 'range-royal';
@@ -296,7 +296,8 @@ else{
       console.log($scope.item);
       $scope.value = percentArr[0];
       $scope.statusColor = colorArr[0];
-      $scope.buttonText = statusTextArr[1];
+      $scope.showText = statusTextArr[$scope.ct - 1];
+      $scope.buttonText = statusTextArr[$scope.ct];
       $scope.statusText = statusTextArr[$scope.ct];
     }
 
@@ -308,7 +309,8 @@ else{
           $scope.ct++;
           $scope.value = percentArr[$scope.ct];
           $scope.statusColor = colorArr[$scope.ct];
-          $scope.buttonText = statusTextArr[$scope.ct + 1];
+          $scope.showText = statusTextArr[$scope.ct - 1];
+          $scope.buttonText = statusTextArr[$scope.ct];
           $scope.statusText = statusTextArr[$scope.ct];
           if ($scope.buttonText == null) {
             $scope.isDelivered = true;
