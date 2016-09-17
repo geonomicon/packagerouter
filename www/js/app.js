@@ -22,6 +22,31 @@ angular.module('packagerouter', ['ionic','ionic.service.core','ngCordova','ngSto
   });
 })
 
+//backbutton
+// .run(function($ionicPlatform, $ionicPopup) {
+//   $ionicPlatform.onHardwareBackButton(function () {
+//       if(true) { // your check here
+//           $ionicPopup.confirm({
+//             title: 'System warning',
+//             template: 'are you sure you want to exit?'
+//           }).then(function(res){
+//             if( res ){
+//               navigator.app.exitApp();
+//             }
+//
+//           })
+//       }
+//   })
+// })
+.run(function($ionicPlatform, $ionicHistory) {
+$ionicPlatform.registerBackButtonAction(function (event) {
+  if ($ionicHistory.currentStateName() === 'app.tracker'){
+    event.preventDefault();
+  } else {
+    $ionicHistory.goBack();
+  }
+}, 100)
+})
 .config(function($stateProvider, $urlRouterProvider) {
   $stateProvider
 

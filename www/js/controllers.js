@@ -266,7 +266,9 @@ angular.module('packagerouter.controllers', [])
   }
 })
 
-.controller('TrackerCtrl', function($scope, UserStorageService, UserIdStorageService, $state, $ionicNavBarDelegate, OrderStorageService, $http) {
+.controller('TrackerCtrl', function($scope, $ionicHistory, UserStorageService, UserIdStorageService, $state, $ionicNavBarDelegate, OrderStorageService, $http) {
+
+
   $scope.ct = 1;
   if(OrderStorageService.getAll().length > 0 ){
   $http.get('http://api.postoncloud.com/api/ShipMart/AddShipmentTracking?ShipmentID=' + OrderStorageService.getAll()[0].ShipmentId + '&AssignTo=' + UserIdStorageService.getAll()[0] + '&Status=' + "Accepted")
