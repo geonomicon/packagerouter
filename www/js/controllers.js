@@ -120,6 +120,16 @@ angular.module('packagerouter.controllers', [])
       item: item
     });
   }
+  $scope.acceptedOr = function(item) {
+    $state.go('app.accepted', {
+      item: item
+    });
+  }
+  $scope.rejectedOr = function(item) {
+    $state.go('app.rejected', {
+      item: item
+    });
+  }
 
   $scope.GeoCodingAPIKey = '93d639c2f2e101a955c9dd2ec8704fca';
 
@@ -266,6 +276,17 @@ angular.module('packagerouter.controllers', [])
   }
 })
 
+.controller('acceptedCtrl', function($scope, $state, Items, UserIdStorageService, OrderStorageService) {
+
+
+})
+
+.controller('RejectedCtrl', function($scope, $state, Items, UserIdStorageService, OrderStorageService) {
+
+
+
+})
+
 .controller('TrackerCtrl', function($scope, $ionicHistory, UserStorageService, UserIdStorageService, $state, $ionicNavBarDelegate, OrderStorageService, $http) {
 
 
@@ -322,6 +343,15 @@ else{
           });
         });
 
+    }
+    $scope.availableOnes = function(){
+      $ionicHistory.clearHistory();
+      $state.go('app.location', {
+        isAccepted: false,
+        isRejected: false,
+        isOrder: true,
+
+      });
     }
 
 

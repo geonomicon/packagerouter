@@ -7,7 +7,7 @@
    Accepted Orders
   </div>
   <div  ng-repeat='item in items' ng-show="isPickedByHim(item.$id)">
-  <a class="item">
+  <a class="item" ng-click="acceptedOr()">
    {{item.orignalBody.itemName}}
   </a>
   </div>
@@ -17,7 +17,7 @@
    Rejected Orders
   </div>
   <div  ng-repeat='item in items' ng-show="!isPickedByHim(item.$id)&&!isCurrentPicker(item.$id)">
-  <a class="item" >
+  <a class="item" ng-click="rejectedOr()">
    {{item.orignalBody.itemName}}
   </a>
   </div>
@@ -28,7 +28,7 @@
  </div>
  <div  ng-repeat='item in items' ng-show="isCurrentPicker(item.$id)">
  <a class="item" ng-click='ordersList(item)'>
-  {{item.orignalBody.itemName}}
+  {{item.orignalBody.itemName}}  <p style="float:right;">{{item.orignalBody.timeSlot}}</p> 
  </a>
  </div>
 </div>

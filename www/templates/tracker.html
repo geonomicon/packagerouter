@@ -34,6 +34,10 @@
       <button class="button button-block button-positive" ng-click="updateStatus()" ng-hide="isDelivered">
           {{buttonText}}
       </button>
+
+      <button class="button button-block button-positive" ng-show="isDelivered" ng-click="availableOnes()">
+            Go to available orders
+      </button>
       </div>
       <div class="item item-divider">
         TimeSlot : {{item.timeSlot}}

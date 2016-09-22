@@ -1,1 +1,18 @@
 [0916/225422:ERROR:crash_report_database_win.cc(412)] unexpected header
+[0919/215615:ERROR:crash_report_database_win.cc(412)] unexpected header
+[0919/220615:ERROR:crash_report_database_win.cc(412)] unexpected header
+[0919/220615:ERROR:crash_report_database_win.cc(412)] unexpected header
+[0919/221115:ERROR:crash_report_database_win.cc(412)] unexpected header
+[0919/222615:ERROR:crash_report_database_win.cc(412)] unexpected header
+[0919/224115:ERROR:crash_report_database_win.cc(412)] unexpected header
+[0919/225615:ERROR:crash_report_database_win.cc(412)] unexpected header
+[0919/232607:ERROR:crash_report_database_win.cc(412)] unexpected header
+[0919/234107:ERROR:crash_report_database_win.cc(412)] unexpected header
+[0921/200112:ERROR:crash_report_database_win.cc(412)] unexpected header
+[0921/201612:ERROR:crash_report_database_win.cc(412)] unexpected header
+[0921/203112:ERROR:crash_report_database_win.cc(412)] unexpected header
+[0921/204612:ERROR:crash_report_database_win.cc(412)] unexpected header
+[0922/215413:ERROR:process_info.cc(608)] range at 0xf13438b600000000, size 0xb2 fully unreadable
+[0922/215413:ERROR:process_info.cc(608)] range at 0xf13438d600000000, size 0xb2 fully unreadable
+[0922/215413:ERROR:process_info.cc(608)] range at 0x0, size 0xb2 fully unreadable
+[0922/215413:ERROR:crash_report_database_win.cc(412)] unexpected header

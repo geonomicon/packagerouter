@@ -42,7 +42,8 @@ angular.module('packagerouter', ['ionic','ionic.service.core','ngCordova','ngSto
 $ionicPlatform.registerBackButtonAction(function (event) {
   if ($ionicHistory.currentStateName() === 'app.tracker'){
     event.preventDefault();
-  } else {
+  } 
+  else {
     $ionicHistory.goBack();
   }
 }, 100)
