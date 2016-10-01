@@ -280,7 +280,7 @@ angular.module('packagerouter.controllers', [])
 $scope.item = $state.params.item;
 console.log($scope.item);
 $http.get('http://api.postoncloud.com/api/ShipMart/AcceptShipmentList?ShipmentID=' +
-$scope.item.ShipmentId )
+$scope.item.orignalBody.ShipmentId )
   .success(function(result) {
 
    console.log(result);
