@@ -42,7 +42,7 @@ angular.module('packagerouter', ['ionic','ionic.service.core','ngCordova','ngSto
 $ionicPlatform.registerBackButtonAction(function (event) {
   if ($ionicHistory.currentStateName() === 'app.tracker'){
     event.preventDefault();
-  } 
+  }
   else {
     $ionicHistory.goBack();
   }
@@ -100,7 +100,7 @@ $ionicPlatform.registerBackButtonAction(function (event) {
 
   .state('app.accepted', {
     url: '/acceptedorder',
-    params: {myParam: null},
+    params: {item: null},
     views: {
       'menuContent': {
         templateUrl: 'templates/accepted.html',
@@ -111,7 +111,7 @@ $ionicPlatform.registerBackButtonAction(function (event) {
 
   .state('app.rejected', {
     url: '/rejectedorder',
-    params: {myParam: null},
+    params: {item: null},
     views: {
       'menuContent': {
         templateUrl: 'templates/rejected.html',
