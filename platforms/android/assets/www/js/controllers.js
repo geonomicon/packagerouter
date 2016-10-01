@@ -99,8 +99,7 @@ angular.module('packagerouter.controllers', [])
     date: new Date(),
     message: "Everything Working Fine",
     title: "Ship24x",
-    autoCancel: true,
-    sound: "file://sounds/ping.mp3"
+    autoCancel: true
   }).then(function() {
     console.log("The notification has been set");
   });
@@ -217,7 +216,7 @@ angular.module('packagerouter.controllers', [])
         for (var i = 0; i < Items[Items.$indexFor(event.key)].pickers.length; i++) {
           roamingTimeout = setTimeout(function(i, Items, event) {
             if (Items[Items.$indexFor(event.key)].pickedBy == null) {
-              Items[Items.$indexFor(event.key)].currentPicker = Items[Items.$indexFor(event.key)].orignalBody.availabeExecutives[Items[Items.$indexFor(event.key)].currentPickerIndex + 1].userId;
+              Items[Items.$indexFor(event.key)].currentPicker = Items[Items.$indexFor(event.key)].orignalBody.availabeExecutives[Items[Items.$indexFor(event.key)].currentPickerIndex + 1].userid;
               Items[Items.$indexFor(event.key)].currentPickerIndex++;
               Items.$save(Items.$indexFor(event.key)).then(function(ref) {
                 ref.key() === Items[Items.$indexFor(event.key)].$id;
@@ -259,9 +258,9 @@ angular.module('packagerouter.controllers', [])
 
   $scope.reject = function(result) {
     if (Items[Items.$indexFor(result)].currentPickerIndex == (Items[Items.$indexFor(result)].pickers.length - 1)) {
-       return;
-     } else {
-      Items[Items.$indexFor(result)].currentPicker = Items[Items.$indexFor(result)].orignalBody.availabeExecutives[Items[Items.$indexFor(result)].currentPickerIndex + 1].userId;
+      return;
+    } else {
+      Items[Items.$indexFor(result)].currentPicker = Items[Items.$indexFor(result)].orignalBody.availabeExecutives[Items[Items.$indexFor(result)].currentPickerIndex + 1].userid;
       Items[Items.$indexFor(result)].currentPickerIndex++;
       Items.$save(Items.$indexFor(result)).then(function(ref) {
         ref.key() === Items[Items.$indexFor(result)].$id;
@@ -277,18 +276,17 @@ angular.module('packagerouter.controllers', [])
 })
 
 .controller('acceptedCtrl', function($scope, $state, Items, UserIdStorageService, OrderStorageService, $http) {
-$scope.item = $state.params.item;
-console.log($scope.item);
-$http.get('http://api.postoncloud.com/api/ShipMart/AcceptShipmentList?ShipmentID=' +
-$scope.item.orignalBody.ShipmentId )
-  .success(function(result) {
-
-   console.log(result);
-   $scope.pickupAddress = result[0].PickupAddress;
-   $scope.deliveryAddress = result[0].DeliveryAddress;
-   $scope.timeslot = result[0].TimeSlote;
-   $scope.date = result[0].Date;
-  });
+  $scope.item = $state.params.item;
+  console.log($scope.item);
+  $http.get('http://api.postoncloud.com/api/ShipMart/AcceptShipmentList?ShipmentID=' +
+      $scope.item.orignalBody.ShipmentId)
+    .success(function(result) {
+      console.log(result);
+      $scope.pickupAddress = result[0].PickupAddress;
+      $scope.deliveryAddress = result[0].DeliveryAddress;
+      $scope.timeslot = result[0].TimeSlote;
+      $scope.date = result[0].Date;
+    });
 
 
 
@@ -296,8 +294,15 @@ $scope.item.orignalBody.ShipmentId )
 })
 
 .controller('RejectedCtrl', function($scope, $state, Items, UserIdStorageService, OrderStorageService, $http) {
+  $scope.item = $state.params.item;
+  $http.get('http://api.postoncloud.com/api/ShipMart/RejectShipmentList?ShipmentID=' + $scope.item.orignalBody.ShipmentId + '&AssignTo=' + $scope.item.orignalBody.pickedBy)
+    .success(function(result) {
 
+      console.log(result);
 
+      $scope.timeslot = result[0].TimeSlote;
+      $scope.date = result[0].Date;
+    });
 
 })
 
@@ -305,21 +310,21 @@ $scope.item.orignalBody.ShipmentId )
 
 
   $scope.ct = 1;
-  if(OrderStorageService.getAll().length > 0 ){
-  $http.get('http://api.postoncloud.com/api/ShipMart/AddShipmentTracking?ShipmentID=' +
-   OrderStorageService.getAll()[0].ShipmentId + '&AssignTo=' + UserIdStorageService.getAll()[0] + '&Status=' + "Accepted")
-    .success(function(result) {
-      viewTracking();
+  if (OrderStorageService.getAll().length > 0) {
+    $http.get('http://api.postoncloud.com/api/ShipMart/AddShipmentTracking?ShipmentID=' +
+        OrderStorageService.getAll()[0].ShipmentId + '&AssignTo=' + UserIdStorageService.getAll()[0] + '&Status=' + "Accepted")
+      .success(function(result) {
+        viewTracking();
+      });
+  } else {
+    $state.go('app.location', {
+      isAccepted: false,
+      isRejected: false,
+      isOrder: true
     });
-}
-else{
-  $state.go('app.location', {
-    isAccepted: false,
-    isRejected: false,
-    isOrder: true
-  });
 
-}
+  }
+
   function viewTracking() {
     var colorArr = ['button-assertive', 'button-positive', 'button-balanced', 'button-calm', 'button-energized'];
     var percentArr = [0, 50, 100];
@@ -359,7 +364,7 @@ else{
         });
 
     }
-    $scope.availableOnes = function(){
+    $scope.availableOnes = function() {
 
       $state.go('app.location', {
         isAccepted: false,
