@@ -289,7 +289,7 @@ angular.module('packagerouter.controllers', [])
 
 .controller('RejectedCtrl', function($scope, $state, Items, UserIdStorageService, OrderStorageService, $http) {
   $scope.item = $state.params.item;
-  $http.get('http://api.postoncloud.com/api/ShipMart/RejectShipmentList?ShipmentID=' + $scope.item.orignalBody.ShipmentId + '&AssignTo=' + $scope.item.pickedBy)
+  $http.get('http://api.postoncloud.com/api/ShipMart/RejectShipmentList?ShipmentID=' + $scope.item.orignalBody.ShipmentId + '&AssignTo=' + UserIdStorageService.getAll()[0])
     .success(function(result) {
       console.log(result);
       $scope.timeslot = result[0].TimeSlote;
