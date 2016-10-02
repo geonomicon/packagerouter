@@ -213,14 +213,15 @@ angular.module('packagerouter.controllers', [])
         console.log("The notification has been set");
         for (var i = 0; i < Items[Items.$indexFor(event.key)].pickers.length; i++) {
           roamingTimeout = setTimeout(function(i, Items, event) {
-            if (Items[Items.$indexFor(event.key)].pickedBy == null) {
+            if (Items[Items.$indexFor(event.key)].pickedBy == null && !(Items[Items.$indexFor(event.key)].currentPickerIndex == (Items[Items.$indexFor(event.key)].pickers.length - 1))) {
               Items[Items.$indexFor(event.key)].currentPicker = Items[Items.$indexFor(event.key)].orignalBody.availabeExecutives[Items[Items.$indexFor(event.key)].currentPickerIndex + 1].userid;
               Items[Items.$indexFor(event.key)].currentPickerIndex++;
               Items.$save(Items.$indexFor(event.key)).then(function(ref) {
                 ref.key() === Items[Items.$indexFor(event.key)].$id;
               });
             } else {
-              return;
+              console.log('Cannot be transferred');
+                return;
             }
           }, 30000, i, Items, event);
 
@@ -256,6 +257,7 @@ angular.module('packagerouter.controllers', [])
 
   $scope.reject = function(result) {
     if (Items[Items.$indexFor(result)].currentPickerIndex == (Items[Items.$indexFor(result)].pickers.length - 1)) {
+      console.log('Cannot be rejected');
       return;
     } else {
       Items[Items.$indexFor(result)].currentPicker = Items[Items.$indexFor(result)].orignalBody.availabeExecutives[Items[Items.$indexFor(result)].currentPickerIndex + 1].userid;
@@ -292,7 +294,7 @@ angular.module('packagerouter.controllers', [])
   $http.get('http://api.postoncloud.com/api/ShipMart/RejectShipmentList?ShipmentID=' + $scope.item.orignalBody.ShipmentId + '&AssignTo=' + UserIdStorageService.getAll()[0])
     .success(function(result) {
       console.log(result);
-      $scope.timeslot = result[0].TimeSlote;
+      $scope.timeslot = result[0].timeSlot;
       $scope.date = result[0].Date;
     });
 })
