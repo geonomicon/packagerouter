@@ -4,7 +4,16 @@
 // the 2nd parameter is an array of 'requires'
 // 'packagerouter.controllers' is found in controllers.js
 // In case of failure contact Rajat Sharma "lunasunkaiser@gmail.com"
-angular.module('packagerouter', ['ionic','ionic.service.core','ngCordova','ngStorage','packagerouter.controllers','packagerouter.storagefactories','packagerouter.socketfactories','firebase'])
+angular.module('packagerouter', [
+  'ionic',
+  'ionic.service.core',
+  'ngCordova',
+  'ngStorage',
+  'packagerouter.controllers',
+  'packagerouter.storagefactories',
+  'packagerouter.socketfactories',
+  'firebase'
+])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -39,86 +48,97 @@ angular.module('packagerouter', ['ionic','ionic.service.core','ngCordova','ngSto
 //   })
 // })
 .run(function($ionicPlatform, $ionicHistory) {
-$ionicPlatform.registerBackButtonAction(function (event) {
-  if ($ionicHistory.currentStateName() === 'app.tracker'){
-    event.preventDefault();
-  }
-  else {
-    $ionicHistory.goBack();
-  }
-}, 100)
-})
-.config(function($stateProvider, $urlRouterProvider) {
-  $stateProvider
+    $ionicPlatform.registerBackButtonAction(function(event) {
+      if ($ionicHistory.currentStateName() === 'app.tracker') {
+        event.preventDefault();
+      } else {
+        $ionicHistory.goBack();
+      }
+    }, 100)
+  })
+  .config(function($stateProvider, $urlRouterProvider) {
+    $stateProvider
 
-    .state('app', {
-    url: '/app',
-    abstract: true,
-    templateUrl: 'templates/menu.html',
-    controller: 'AppCtrl'
-  })
+      .state('app', {
+      url: '/app',
+      abstract: true,
+      templateUrl: 'templates/menu.html',
+      controller: 'AppCtrl'
+    })
 
-  .state('app.login', {
-    url: '/login',
-    views: {
-      'menuContent': {
-        templateUrl: 'templates/login.html',
-        controller: 'LoginCtrl'
-      }
-    }
-  })
-  .state('app.tracker', {
-    url: '/tracker',
-    params: {myParam: null},
-    views: {
-      'menuContent': {
-        templateUrl: 'templates/tracker.html',
-        controller: 'TrackerCtrl'
-      }
-    }
-  })
-  .state('app.order', {
-    url: '/order',
-    params: {item: null},
-    views: {
-      'menuContent': {
-        templateUrl: 'templates/order.html',
-        controller: 'OrderCtrl'
-      }
-    }
-  })
-  .state('app.location', {
-    url: '/sendlocation',
-      params: {isAccepted: false, isRejected: false, isOrder: true},
-    views: {
-      'menuContent': {
-        templateUrl: 'templates/location.html',
-        controller: 'LocationCtrl'
-      }
-    }
-  })
+    .state('app.login', {
+        url: '/login',
+        views: {
+          'menuContent': {
+            templateUrl: 'templates/login.html',
+            controller: 'LoginCtrl'
+          }
+        }
+      })
+      .state('app.tracker', {
+        url: '/tracker',
+        params: {
+          myParam: null
+        },
+        views: {
+          'menuContent': {
+            templateUrl: 'templates/tracker.html',
+            controller: 'TrackerCtrl'
+          }
+        }
+      })
+      .state('app.order', {
+        url: '/order',
+        params: {
+          item: null
+        },
+        views: {
+          'menuContent': {
+            templateUrl: 'templates/order.html',
+            controller: 'OrderCtrl'
+          }
+        }
+      })
+      .state('app.location', {
+        url: '/sendlocation',
+        params: {
+          isAccepted: false,
+          isRejected: false,
+          isOrder: true
+        },
+        views: {
+          'menuContent': {
+            templateUrl: 'templates/location.html',
+            controller: 'LocationCtrl'
+          }
+        }
+      })
 
-  .state('app.accepted', {
-    url: '/acceptedorder',
-    params: {item: null},
-    views: {
-      'menuContent': {
-        templateUrl: 'templates/accepted.html',
-        controller: 'acceptedCtrl'
+    .state('app.accepted', {
+      url: '/acceptedorder',
+      params: {
+        item: null
+      },
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/accepted.html',
+          controller: 'acceptedCtrl'
+        }
       }
-    }
-  })
+    })
 
-  .state('app.rejected', {
-    url: '/rejectedorder',
-    params: {item: null},
-    views: {
-      'menuContent': {
-        templateUrl: 'templates/rejected.html',
-        controller: 'RejectedCtrl'
+    .state('app.rejected', {
+      url: '/rejectedorder',
+      params: {
+        item: null
+      },
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/rejected.html',
+          controller: 'RejectedCtrl'
+        }
       }
-    }
+    });
+    // if none of the above states are matched, use this as the fallback
+    $urlRouterProvider.otherwise('/app/sendlocation');
   });
-  // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/app/sendlocation');
-});

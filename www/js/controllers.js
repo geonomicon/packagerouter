@@ -2,7 +2,11 @@
 //AppCtrl for Logout Process, uses StorageFactories to create User Sessions
 angular.module('packagerouter.controllers', [])
 
-.controller('AppCtrl', function($scope, UserIdStorageService, UserStorageService, $state, $ionicNavBarDelegate, $http) {
+.controller('AppCtrl', function($scope, UserIdStorageService, UserStorageService, $state,
+  $ionicNavBarDelegate,
+  $http,
+  $localStorage,
+  $ionicLoading) {
   $ionicNavBarDelegate.showBackButton(false);
   $scope.$on('$ionicView.enter', function() {
     if (UserStorageService.getAll().length > 0) {
@@ -13,6 +17,9 @@ angular.module('packagerouter.controllers', [])
     }
   });
   $scope.doLogout = function() {
+    $ionicLoading.show({
+      template: '<ion-spinner icon="bubbles"></ion-spinner><br/>Logging Out!'
+    });
     $http.get('http://api.postoncloud.com/api/ShipMart/DeleteVendorExecutive?UserID=' + UserIdStorageService.getAll()[0])
       .success(function(result) {
         console.log(result);
@@ -22,7 +29,6 @@ angular.module('packagerouter.controllers', [])
       })
       .finally(function() {
         $ionicLoading.hide();
-        $scope.$broadcast('scroll.refreshComplete');
       });
 
   };
@@ -93,17 +99,43 @@ angular.module('packagerouter.controllers', [])
 })
 
 .controller('LocationCtrl', function($scope, UserIdStorageService, UserStorageService, $state, $ionicNavBarDelegate,
-  $cordovaGeolocation, $ionicLoading, $http, LocationStorageService, OrderStorageService, $cordovaLocalNotification, Items) {
-  $cordovaLocalNotification.add({
-    id: 1,
-    date: new Date(),
-    message: "Everything Working Fine",
-    title: "Ship24x",
-    autoCancel: true
-  }).then(function() {
-    console.log("The notification has been set");
+  $cordovaGeolocation,
+  $ionicLoading, $http, LocationStorageService,
+  OrderStorageService,
+  $cordovaLocalNotification,
+  Items,
+  $ionicPlatform, $ionicPopup) {
+
+  ionic.Platform.ready(function() {
+    $cordovaLocalNotification.add({
+      id: 1,
+      date: new Date(),
+      message: "Everything Working Fine",
+      title: "Ship24x",
+      autoCancel: true
+    }).then(function() {
+      console.log("The notification has been set");
+    });
   });
 
+  $ionicPlatform.registerBackButtonAction(function() {
+    $scope.showConfirm();
+  }, 100);
+
+  $scope.showConfirm = function() {
+    var confirmPopup = $ionicPopup.confirm({
+      title: 'Exit App',
+      template: 'Are you sure you want to exit the App?'
+    });
+
+    confirmPopup.then(function(res) {
+      if (res) {
+        navigator.app.exitApp();
+      } else {
+        console.log('You are not sure');
+      }
+    });
+  };
   $scope.isAccepted = $state.params.isAccepted;
   $scope.isRejected = $state.params.isRejected;
   $scope.isNormalOr = $state.params.isOrder;
@@ -133,52 +165,40 @@ angular.module('packagerouter.controllers', [])
   $scope.GeoCodingAPIKey = '93d639c2f2e101a955c9dd2ec8704fca';
 
   var getLocationAndAddress = function() {
-
     ionic.Platform.ready(function() {
-
       var posOptions = {
         enableHighAccuracy: true,
         timeout: 2000000,
         maximumAge: 0
       };
 
-      if (LocationStorageService.getAll().length < 1) {
-        $cordovaGeolocation.getCurrentPosition(posOptions).then(function(position) {
-          $scope.lat = position.coords.latitude;
-          $scope.lng = position.coords.longitude;
-          $ionicLoading.show({
-            template: '<ion-spinner icon="bubbles"></ion-spinner><br/>Acquiring location!'
-          });
-          $http.get('https://api.opencagedata.com/geocode/v1/json?q=' + $scope.lat + '+' + $scope.lng + '&key=' + $scope.GeoCodingAPIKey)
-            .success(function(result) {
-              $scope.address = result.results[0].formatted;
-              location.lat = $scope.lat;
-              location.lng = $scope.lng;
-              location.add = result.results[0].formatted;
-              LocationStorageService.add(location);
-              $http.get('http://api.postoncloud.com/api/ShipMart/AddCurrentUSerLocation?UserId=' + UserIdStorageService.getAll()[0] + '&Latitude=' + $scope.lat + '&Longlatitude=' + $scope.lng + '&Status=5&Type=1&CreatedBy=1')
-                .success(function(miniresult) {
-                  $scope.result = 'Location Sent to Server';
-                  $ionicLoading.hide();
-                  $scope.$broadcast('scroll.refreshComplete');
-                });
-            })
-        }, function(err) {
-          $ionicLoading.hide();
-          $scope.$broadcast('scroll.refreshComplete');
-          console.log(err);
+      $cordovaGeolocation.getCurrentPosition(posOptions).then(function(position) {
+        $scope.lat = position.coords.latitude;
+        $scope.lng = position.coords.longitude;
+        $ionicLoading.show({
+          template: '<ion-spinner icon="bubbles"></ion-spinner><br/>Acquiring location!'
         });
-      } else {
-        $scope.lat = LocationStorageService.getAll()[0].lat;
-        $scope.lng = LocationStorageService.getAll()[0].lng;
-        $scope.address = LocationStorageService.getAll()[0].add;
+        $http.get('https://api.opencagedata.com/geocode/v1/json?q=' + $scope.lat + '+' + $scope.lng + '&key=' + $scope.GeoCodingAPIKey)
+          .success(function(result) {
+            $scope.address = result.results[0].formatted;
+            location.lat = $scope.lat;
+            location.lng = $scope.lng;
+            location.add = result.results[0].formatted;
+            LocationStorageService.add(location);
+            $http.get('http://api.postoncloud.com/api/ShipMart/AddCurrentUSerLocation?UserId=' + UserIdStorageService.getAll()[0] + '&Latitude=' + $scope.lat + '&Longlatitude=' + $scope.lng + '&Status=5&Type=1&CreatedBy=1')
+              .success(function(miniresult) {
+                $scope.result = 'Location Sent to Server';
+                $ionicLoading.hide();
+                $scope.$broadcast('scroll.refreshComplete');
+              });
+          })
+      }, function(err) {
         $ionicLoading.hide();
         $scope.$broadcast('scroll.refreshComplete');
-      }
+        console.log(err);
+      });
     });
   };
-
-
 
   var location = {
     lat: null,
@@ -196,8 +216,6 @@ angular.module('packagerouter.controllers', [])
     }
   });
 
-
-
   $scope.items = Items;
 
   Items.$watch(function(event) {
@@ -210,22 +228,22 @@ angular.module('packagerouter.controllers', [])
         autoCancel: true,
         sound: "file://sounds/ping.mp3"
       }).then(function() {
-        console.log("The notification has been set");
-        for (var i = 0; i < Items[Items.$indexFor(event.key)].pickers.length; i++) {
-          roamingTimeout = setTimeout(function(i, Items, event) {
-            if (Items[Items.$indexFor(event.key)].pickedBy == null && !(Items[Items.$indexFor(event.key)].currentPickerIndex == (Items[Items.$indexFor(event.key)].pickers.length - 1))) {
-              Items[Items.$indexFor(event.key)].currentPicker = Items[Items.$indexFor(event.key)].orignalBody.availabeExecutives[Items[Items.$indexFor(event.key)].currentPickerIndex + 1].userid;
-              Items[Items.$indexFor(event.key)].currentPickerIndex++;
-              Items.$save(Items.$indexFor(event.key)).then(function(ref) {
-                ref.key() === Items[Items.$indexFor(event.key)].$id;
-              });
-            } else {
-              console.log('Cannot be transferred');
-                return;
-            }
-          }, 30000, i, Items, event);
+      console.log("The notification has been set");
+      for (var i = 0; i < Items[Items.$indexFor(event.key)].pickers.length; i++) {
+        roamingTimeout = setTimeout(function(i, Items, event) {
+          if (Items[Items.$indexFor(event.key)].pickedBy == null && !(Items[Items.$indexFor(event.key)].currentPickerIndex == (Items[Items.$indexFor(event.key)].pickers.length - 1))) {
+            Items[Items.$indexFor(event.key)].currentPicker = Items[Items.$indexFor(event.key)].orignalBody.availabeExecutives[Items[Items.$indexFor(event.key)].currentPickerIndex + 1].userid;
+            Items[Items.$indexFor(event.key)].currentPickerIndex++;
+            Items.$save(Items.$indexFor(event.key)).then(function(ref) {
+              ref.key() === Items[Items.$indexFor(event.key)].$id;
+            });
+          } else {
+            console.log('Cannot be transferred');
+            return;
+          }
+        }, 30000, i, Items, event);
 
-        }
+      }
       });
     }
   });
@@ -243,6 +261,7 @@ angular.module('packagerouter.controllers', [])
 })
 
 .controller('OrderCtrl', function($scope, $state, Items, UserIdStorageService, OrderStorageService, $http) {
+
   $scope.item = $state.params.item;
   $scope.accept = function(result) {
     OrderStorageService.removeAll();
