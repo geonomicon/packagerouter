@@ -16,7 +16,7 @@
   <div class="item item-divider">
    Rejected Orders
   </div>
-  <div  ng-repeat='item in items' ng-show="!isPickedByHim(item.$id)&&!isCurrentPicker(item.$id)">
+  <div  ng-repeat='item in items' ng-show="hasRejected(item.$id)">
   <a class="item" ng-click="rejectedOr(item)">
    {{item.orignalBody.itemName}}
   </a>

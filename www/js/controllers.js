@@ -228,27 +228,29 @@ angular.module('packagerouter.controllers', [])
         autoCancel: true,
         sound: "file://sounds/ping.mp3"
       }).then(function() {
-      console.log("The notification has been set");
-      for (var i = 0; i < Items[Items.$indexFor(event.key)].pickers.length; i++) {
-        roamingTimeout = setTimeout(function(i, Items, event) {
-          if (Items[Items.$indexFor(event.key)].pickedBy == null && !(Items[Items.$indexFor(event.key)].currentPickerIndex == (Items[Items.$indexFor(event.key)].pickers.length - 1))) {
-            Items[Items.$indexFor(event.key)].currentPicker = Items[Items.$indexFor(event.key)].orignalBody.availabeExecutives[Items[Items.$indexFor(event.key)].currentPickerIndex + 1].userid;
-            Items[Items.$indexFor(event.key)].currentPickerIndex++;
-            Items.$save(Items.$indexFor(event.key)).then(function(ref) {
-              ref.key() === Items[Items.$indexFor(event.key)].$id;
-            });
-          } else {
-            console.log('Cannot be transferred');
-            return;
-          }
-        }, 30000, i, Items, event);
+        console.log("The notification has been set");
+        for (var i = 0; i < Items[Items.$indexFor(event.key)].pickers.length; i++) {
+          roamingTimeout = setTimeout(function(i, Items, event) {
+            if (Items[Items.$indexFor(event.key)].pickedBy == null && !(Items[Items.$indexFor(event.key)].currentPickerIndex == (Items[Items.$indexFor(event.key)].pickers.length - 1))) {
+              Items[Items.$indexFor(event.key)].currentPicker = Items[Items.$indexFor(event.key)].orignalBody.availabeExecutives[Items[Items.$indexFor(event.key)].currentPickerIndex + 1].userid;
+              Items[Items.$indexFor(event.key)].currentPickerIndex++;
+              Items.$save(Items.$indexFor(event.key)).then(function(ref) {
+                ref.key() === Items[Items.$indexFor(event.key)].$id;
+              });
+            } else {
+              console.log('Cannot be transferred');
+              return;
+            }
+          }, 30000, i, Items, event);
 
-      }
+        }
       });
     }
   });
 
-
+  $scope.hasRejected = function(item) {
+    Items[Items.$indexFor(item)].rejectedBy.a.indexOf(UserIdStorageService.getAll()[0]) >= 0;
+  }
 
   $scope.isCurrentPicker = function(item) {
     return Items[Items.$indexFor(item)].currentPicker == UserIdStorageService.getAll()[0];
@@ -279,6 +281,7 @@ angular.module('packagerouter.controllers', [])
       console.log('Cannot be rejected');
       return;
     } else {
+      Items[Items.$indexFor(result)].rejectedBy.push(UserIdStorageService.getAll()[0]);
       Items[Items.$indexFor(result)].currentPicker = Items[Items.$indexFor(result)].orignalBody.availabeExecutives[Items[Items.$indexFor(result)].currentPickerIndex + 1].userid;
       Items[Items.$indexFor(result)].currentPickerIndex++;
       Items.$save(Items.$indexFor(result)).then(function(ref) {
