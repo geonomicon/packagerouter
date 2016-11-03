@@ -104,38 +104,23 @@ angular.module('packagerouter.controllers', [])
   OrderStorageService,
   $cordovaLocalNotification,
   Items,
-  $ionicPlatform, $ionicPopup) {
+  $ionicPlatform, $ionicPopup,
+  $ionicHistory) {
+  //
+  // ionic.Platform.ready(function() {
+  //   $cordovaLocalNotification.add({
+  //     id: 1,
+  //     date: new Date(),
+  //     message: "Everything Working Fine",
+  //     title: "Ship24x",
+  //     autoCancel: true
+  //   }).then(function() {
+  //     console.log("The notification has been set");
+  //   });
+  // });
 
-  ionic.Platform.ready(function() {
-    $cordovaLocalNotification.add({
-      id: 1,
-      date: new Date(),
-      message: "Everything Working Fine",
-      title: "Ship24x",
-      autoCancel: true
-    }).then(function() {
-      console.log("The notification has been set");
-    });
-  });
 
-  $ionicPlatform.registerBackButtonAction(function() {
-    $scope.showConfirm();
-  }, 100);
 
-  $scope.showConfirm = function() {
-    var confirmPopup = $ionicPopup.confirm({
-      title: 'Exit App',
-      template: 'Are you sure you want to exit the App?'
-    });
-
-    confirmPopup.then(function(res) {
-      if (res) {
-        navigator.app.exitApp();
-      } else {
-        console.log('You are not sure');
-      }
-    });
-  };
   $scope.isAccepted = $state.params.isAccepted;
   $scope.isRejected = $state.params.isRejected;
   $scope.isNormalOr = $state.params.isOrder;
@@ -220,36 +205,36 @@ angular.module('packagerouter.controllers', [])
 
   Items.$watch(function(event) {
     if (event.event === 'child_added' && Items[Items.$indexFor(event.key)].currentPicker === UserIdStorageService.getAll()[0]) {
-      $cordovaLocalNotification.add({
-        id: Items[Items.$indexFor(event.key)].orignalBody.shipmentId,
-        date: new Date(),
-        message: Items[Items.$indexFor(event.key)].orignalBody.pickupAddress,
-        title: Items[Items.$indexFor(event.key)].orignalBody.itemName,
-        autoCancel: true,
-        sound: "file://sounds/ping.mp3"
-      }).then(function() {
-        console.log("The notification has been set");
-        for (var i = 0; i < Items[Items.$indexFor(event.key)].pickers.length; i++) {
-          roamingTimeout = setTimeout(function(i, Items, event) {
-            if (Items[Items.$indexFor(event.key)].pickedBy == null && !(Items[Items.$indexFor(event.key)].currentPickerIndex == (Items[Items.$indexFor(event.key)].pickers.length - 1))) {
-              Items[Items.$indexFor(event.key)].currentPicker = Items[Items.$indexFor(event.key)].orignalBody.availabeExecutives[Items[Items.$indexFor(event.key)].currentPickerIndex + 1].userid;
-              Items[Items.$indexFor(event.key)].currentPickerIndex++;
-              Items.$save(Items.$indexFor(event.key)).then(function(ref) {
-                ref.key() === Items[Items.$indexFor(event.key)].$id;
-              });
-            } else {
-              console.log('Cannot be transferred');
-              return;
-            }
-          }, 30000, i, Items, event);
+      // $cordovaLocalNotification.add({
+      //   id: Items[Items.$indexFor(event.key)].orignalBody.shipmentId,
+      //   date: new Date(),
+      //   message: Items[Items.$indexFor(event.key)].orignalBody.pickupAddress,
+      //   title: Items[Items.$indexFor(event.key)].orignalBody.itemName,
+      //   autoCancel: true,
+      //   sound: "file://sounds/ping.mp3"
+      // }).then(function() {
+      //   console.log("The notification has been set");
+      for (var i = 0; i < Items[Items.$indexFor(event.key)].pickers.length; i++) {
+        roamingTimeout = setTimeout(function(i, Items, event) {
+          if (Items[Items.$indexFor(event.key)].pickedBy == null && !(Items[Items.$indexFor(event.key)].currentPickerIndex == (Items[Items.$indexFor(event.key)].pickers.length - 1))) {
+            Items[Items.$indexFor(event.key)].currentPicker = Items[Items.$indexFor(event.key)].orignalBody.availabeExecutives[Items[Items.$indexFor(event.key)].currentPickerIndex + 1].userid;
+            Items[Items.$indexFor(event.key)].currentPickerIndex++;
+            Items.$save(Items.$indexFor(event.key)).then(function(ref) {
+              ref.key() === Items[Items.$indexFor(event.key)].$id;
+            });
+          } else {
+            console.log('Cannot be transferred');
+            return;
+          }
+        }, 30000, i, Items, event);
 
-        }
-      });
+      }
+      // });
     }
   });
 
   $scope.hasRejected = function(item) {
-    Items[Items.$indexFor(item)].rejectedBy.a.indexOf(UserIdStorageService.getAll()[0]) >= 0;
+    Items[Items.$indexFor(item)].rejectedBy.indexOf(UserIdStorageService.getAll()[0]) >= 0;
   }
 
   $scope.isCurrentPicker = function(item) {
@@ -321,8 +306,10 @@ angular.module('packagerouter.controllers', [])
     });
 })
 
-.controller('TrackerCtrl', function($scope, UserStorageService, UserIdStorageService, $state, $ionicNavBarDelegate, OrderStorageService, $http) {
-  $scope.ct = 1;
+.controller('TrackerCtrl', function($ionicHistory, $ionicPlatform, $scope, UserStorageService, UserIdStorageService, $state, $ionicNavBarDelegate, OrderStorageService, $http,$localStorage) {
+  if($localStorage.trackerCount[UserIdStorageService.getAll()[0]]) $scope.ct = $localStorage.trackerCount[UserIdStorageService.getAll()[0]];
+  else $scope.ct = 1;
+
   if (OrderStorageService.getAll().length > 0) {
     $http.get('http://api.postoncloud.com/api/ShipMart/AddShipmentTracking?ShipmentID=' +
         OrderStorageService.getAll()[0].ShipmentId + '&AssignTo=' + UserIdStorageService.getAll()[0] + '&Status=' + "Accepted")
@@ -363,6 +350,7 @@ angular.module('packagerouter.controllers', [])
         .success(function(result) {
           console.log(result);
           $scope.ct++;
+          $localStorage.trackerCount[UserIdStorageService.getAll()[0]] = $scope.ct;
           $scope.value = percentArr[$scope.ct];
           $scope.statusColor = colorArr[$scope.ct];
           $scope.showText = statusTextArr[$scope.ct - 1];
@@ -371,9 +359,6 @@ angular.module('packagerouter.controllers', [])
           if ($scope.buttonText == null) {
             $scope.isDelivered = true;
           }
-          $state.go($state.current, {}, {
-            reload: true
-          });
         });
 
     }

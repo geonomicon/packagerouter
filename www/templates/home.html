@@ -1,0 +1,16 @@
+<ion-view view-title="Available Orders">
+  <ion-content>
+    <ion-refresher pulling-text="Pull to refresh..." on-refresh="refreshLocation()">
+    </ion-refresher>
+    <div class="list" ng-show="isNormalOr">
+      <div class="item item-divider">
+        Orders
+      </div>
+      <div ng-repeat='item in items' ng-show="isCurrentPicker(item.$id)">
+        <a class="item" ng-click='ordersList(item)'>
+  {{item.orignalBody.itemName}}  <p style="float:right;">{{item.orignalBody.timeSlot}}</p>
+ </a>
+      </div>
+    </div>
+  </ion-content>
+</ion-view>

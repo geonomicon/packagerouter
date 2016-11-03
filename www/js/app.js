@@ -31,30 +31,34 @@ angular.module('packagerouter', [
   });
 })
 
-//backbutton
-// .run(function($ionicPlatform, $ionicPopup) {
-//   $ionicPlatform.onHardwareBackButton(function () {
-//       if(true) { // your check here
-//           $ionicPopup.confirm({
-//             title: 'System warning',
-//             template: 'are you sure you want to exit?'
-//           }).then(function(res){
-//             if( res ){
-//               navigator.app.exitApp();
-//             }
-//
-//           })
-//       }
-//   })
-// })
-.run(function($ionicPlatform, $ionicHistory) {
-    $ionicPlatform.registerBackButtonAction(function(event) {
-      if ($ionicHistory.currentStateName() === 'app.tracker') {
-        event.preventDefault();
+.run(function($ionicPlatform, $ionicHistory, $state, $ionicPopup) {
+    $ionicPlatform.registerBackButtonAction(function() {
+      if ($state.params.isOrder) {
+        var confirmPopup = $ionicPopup.confirm({
+          title: 'Exit App',
+          template: 'Are you sure you want to exit the App?'
+        });
+
+        confirmPopup.then(function(res) {
+          if (res) {
+            navigator.app.exitApp();
+          } else {
+            console.log('You are not sure');
+          }
+        });
       } else {
-        $ionicHistory.goBack();
+        if ($ionicHistory.currentStateName() === 'app.tracker') {
+          $state.go('app.location', {
+            isAccepted: false,
+            isRejected: false,
+            isOrder: true
+          });
+        } else {
+          $ionicHistory.goBack();
+        }
+
       }
-    }, 100)
+    }, 100);
   })
   .config(function($stateProvider, $urlRouterProvider) {
     $stateProvider
