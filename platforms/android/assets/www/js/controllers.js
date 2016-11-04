@@ -104,6 +104,7 @@ angular.module('packagerouter.controllers', [])
   OrderStorageService,
   $cordovaLocalNotification,
   Items,
+  $localStorage,
   $ionicPlatform, $ionicPopup,
   $ionicHistory) {
   //
@@ -247,18 +248,17 @@ angular.module('packagerouter.controllers', [])
 
 })
 
-.controller('OrderCtrl', function($scope, $state, Items, UserIdStorageService, OrderStorageService, $http) {
+.controller('OrderCtrl', function($scope, $state, Items, UserIdStorageService, OrderStorageService, $http, $localStorage) {
 
   $scope.item = $state.params.item;
   $scope.accept = function(result) {
-    OrderStorageService.removeAll();
-    OrderStorageService.add(Items[Items.$indexFor(result)].orignalBody);
+    $localStorage.trackingOrder = Items[Items.$indexFor(result)].orignalBody;
     Items[Items.$indexFor(result)].pickedBy = UserIdStorageService.getAll()[0];
     Items[Items.$indexFor(result)].currentPicker = "-1";
     Items.$save(Items.$indexFor(result)).then(function(ref) {
       ref.key() === Items[Items.$indexFor(result)].$id;
     });
-    $state.go('app.tracker');
+    $state.go('app.tracker',{myParam:angular.copy(Items[Items.$indexFor(result)].orignalBody)});
   }
 
   $scope.reject = function(result) {
@@ -306,12 +306,13 @@ angular.module('packagerouter.controllers', [])
     });
 })
 
-.controller('TrackerCtrl', function($ionicHistory, $ionicPlatform, $scope, UserStorageService, UserIdStorageService, $state, $ionicNavBarDelegate, OrderStorageService, $http) {
-  $scope.ct = 1;
+.controller('TrackerCtrl', function($ionicHistory, $ionicPlatform, $scope, UserStorageService, UserIdStorageService, $state, $ionicNavBarDelegate, OrderStorageService, $http,$localStorage,$stateParams) {
+  if(angular.isDefined($localStorage['trackerCount'+$localStorage.trackingOrder.ShipmentId])) $scope.ct = $localStorage['trackerCount'+$localStorage.trackingOrder.ShipmentId];
+  else $scope.ct = 1;
 
-  if (OrderStorageService.getAll().length > 0) {
+  if (angular.isDefined($localStorage.trackingOrder)) {
     $http.get('http://api.postoncloud.com/api/ShipMart/AddShipmentTracking?ShipmentID=' +
-        OrderStorageService.getAll()[0].ShipmentId + '&AssignTo=' + UserIdStorageService.getAll()[0] + '&Status=' + "Accepted")
+        $localStorage.trackingOrder.ShipmentId + '&AssignTo=' + UserIdStorageService.getAll()[0] + '&Status=' + "Accepted")
       .success(function(result) {
         viewTracking();
       });
@@ -334,7 +335,7 @@ angular.module('packagerouter.controllers', [])
       $scope.rangeColorPainters = 'range-royal';
       $scope.nothingToSeeHere = true;
     } else {
-      $scope.item = OrderStorageService.getAll()[0];
+      $scope.item = $localStorage.trackingOrder;
       console.log($scope.item);
       $scope.value = percentArr[0];
       $scope.statusColor = colorArr[0];
@@ -349,6 +350,7 @@ angular.module('packagerouter.controllers', [])
         .success(function(result) {
           console.log(result);
           $scope.ct++;
+          $localStorage['trackerCount'+$localStorage.trackingOrder.ShipmentId] = $scope.ct;
           $scope.value = percentArr[$scope.ct];
           $scope.statusColor = colorArr[$scope.ct];
           $scope.showText = statusTextArr[$scope.ct - 1];
