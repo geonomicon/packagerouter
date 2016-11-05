@@ -81,6 +81,7 @@ angular.module('packagerouter', [
       })
       .state('app.tracker', {
         url: '/tracker',
+        cache: false,
         params: {
           myParam: null
         },
@@ -93,6 +94,7 @@ angular.module('packagerouter', [
       })
       .state('app.order', {
         url: '/order',
+        cache: false,
         params: {
           item: null
         },
@@ -105,6 +107,7 @@ angular.module('packagerouter', [
       })
       .state('app.location', {
         url: '/sendlocation',
+        cache: false,
         params: {
           isAccepted: false,
           isRejected: false,
@@ -120,6 +123,7 @@ angular.module('packagerouter', [
 
     .state('app.accepted', {
       url: '/acceptedorder',
+      cache: false,
       params: {
         item: null
       },
@@ -133,6 +137,7 @@ angular.module('packagerouter', [
 
     .state('app.rejected', {
       url: '/rejectedorder',
+      cache: false,
       params: {
         item: null
       },

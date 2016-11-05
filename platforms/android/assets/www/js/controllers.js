@@ -252,7 +252,7 @@ angular.module('packagerouter.controllers', [])
 
   $scope.item = $state.params.item;
   $scope.accept = function(result) {
-    $localStorage.trackingOrder = Items[Items.$indexFor(result)].orignalBody;
+    OrderStorageService.addAt(Items[Items.$indexFor(result)].orignalBody);
     Items[Items.$indexFor(result)].pickedBy = UserIdStorageService.getAll()[0];
     Items[Items.$indexFor(result)].currentPicker = "-1";
     Items.$save(Items.$indexFor(result)).then(function(ref) {
@@ -307,12 +307,12 @@ angular.module('packagerouter.controllers', [])
 })
 
 .controller('TrackerCtrl', function($ionicHistory, $ionicPlatform, $scope, UserStorageService, UserIdStorageService, $state, $ionicNavBarDelegate, OrderStorageService, $http,$localStorage,$stateParams) {
-  if(angular.isDefined($localStorage['trackerCount'+$localStorage.trackingOrder.ShipmentId])) $scope.ct = $localStorage['trackerCount'+$localStorage.trackingOrder.ShipmentId];
+  if(angular.isDefined(OrderStorageService.getAt()) && angular.isDefined(OrderStorageService.getAt().ShipmentId) && angular.isDefined(OrderStorageService.getCustom('trackerCount'+OrderStorageService.getAt().ShipmentId))) $scope.ct = OrderStorageService.getCustom('trackerCount'+OrderStorageService.getAt().ShipmentId);
   else $scope.ct = 1;
 
-  if (angular.isDefined($localStorage.trackingOrder)) {
+  if (angular.isDefined(OrderStorageService.getAt())) {
     $http.get('http://api.postoncloud.com/api/ShipMart/AddShipmentTracking?ShipmentID=' +
-        $localStorage.trackingOrder.ShipmentId + '&AssignTo=' + UserIdStorageService.getAll()[0] + '&Status=' + "Accepted")
+        OrderStorageService.getAt().ShipmentId + '&AssignTo=' + UserIdStorageService.getAll()[0] + '&Status=' + "Accepted")
       .success(function(result) {
         viewTracking();
       });
@@ -331,11 +331,11 @@ angular.module('packagerouter.controllers', [])
     var classChanger = [''];
     var statusTextArr = ['Accepted', 'Reached Vendor', 'Picked from Vendor', 'Reached Customer Premises', 'Delivered', null];
 
-    if (OrderStorageService.getAll().length == 0) {
+    if (angular.isUndefined(OrderStorageService.getAt())) {
       $scope.rangeColorPainters = 'range-royal';
       $scope.nothingToSeeHere = true;
     } else {
-      $scope.item = $localStorage.trackingOrder;
+      $scope.item = OrderStorageService.getAt();
       console.log($scope.item);
       $scope.value = percentArr[0];
       $scope.statusColor = colorArr[0];
@@ -350,7 +350,7 @@ angular.module('packagerouter.controllers', [])
         .success(function(result) {
           console.log(result);
           $scope.ct++;
-          $localStorage['trackerCount'+$localStorage.trackingOrder.ShipmentId] = $scope.ct;
+          OrderStorageService.putCustom('trackerCount'+OrderStorageService.getAt().ShipmentId,$scope.ct);
           $scope.value = percentArr[$scope.ct];
           $scope.statusColor = colorArr[$scope.ct];
           $scope.showText = statusTextArr[$scope.ct - 1];
