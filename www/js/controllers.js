@@ -244,6 +244,7 @@ angular.module('packagerouter.controllers', [])
   $scope.accept = function(result) {
     Items[Items.$indexFor(result)].pickedBy = UserIdStorageService.getAll()[0];
     Items[Items.$indexFor(result)].currentPicker = "-1";
+    Items[Items.$indexFor(item)].availableExecutives.length = 0;
     Items.$save(Items.$indexFor(result)).then(function(ref) {
       ref.key() === Items[Items.$indexFor(result)].$id;
     });

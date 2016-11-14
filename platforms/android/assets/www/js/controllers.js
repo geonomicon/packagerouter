@@ -95,7 +95,6 @@ angular.module('packagerouter.controllers', [])
 
 .controller('LogoutCtrl', function($scope, UserStorageService, $state, $ionicNavBarDelegate) {
 
-
 })
 
 .controller('LocationCtrl', function($scope, UserIdStorageService, UserStorageService, $state, $ionicNavBarDelegate,
@@ -204,42 +203,33 @@ angular.module('packagerouter.controllers', [])
 
   $scope.items = Items;
 
-  Items.$watch(function(event) {
-    if (event.event === 'child_added' && Items[Items.$indexFor(event.key)].currentPicker === UserIdStorageService.getAll()[0]) {
-      // $cordovaLocalNotification.add({
-      //   id: Items[Items.$indexFor(event.key)].orignalBody.shipmentId,
-      //   date: new Date(),
-      //   message: Items[Items.$indexFor(event.key)].orignalBody.pickupAddress,
-      //   title: Items[Items.$indexFor(event.key)].orignalBody.itemName,
-      //   autoCancel: true,
-      //   sound: "file://sounds/ping.mp3"
-      // }).then(function() {
-      //   console.log("The notification has been set");
-      for (var i = 0; i < Items[Items.$indexFor(event.key)].pickers.length; i++) {
-        roamingTimeout = setTimeout(function(i, Items, event) {
-          if (Items[Items.$indexFor(event.key)].pickedBy == null && !(Items[Items.$indexFor(event.key)].currentPickerIndex == (Items[Items.$indexFor(event.key)].pickers.length - 1))) {
-            Items[Items.$indexFor(event.key)].currentPicker = Items[Items.$indexFor(event.key)].orignalBody.availabeExecutives[Items[Items.$indexFor(event.key)].currentPickerIndex + 1].userid;
-            Items[Items.$indexFor(event.key)].currentPickerIndex++;
-            Items.$save(Items.$indexFor(event.key)).then(function(ref) {
-              ref.key() === Items[Items.$indexFor(event.key)].$id;
-            });
-          } else {
-            console.log('Cannot be transferred');
-            return;
-          }
-        }, 30000, i, Items, event);
-
-      }
-      // });
-    }
-  });
+  // Items.$watch(function(event) {
+  //   if (event.event === 'child_added' && Items[Items.$indexFor(event.key)].currentPicker === UserIdStorageService.getAll()[0]) {
+  //     for (var i = 0; i < Items[Items.$indexFor(event.key)].pickers.length; i++) {
+  //       roamingTimeout = setTimeout(function(i, Items, event) {
+  //         if (Items[Items.$indexFor(event.key)].pickedBy == null && !(Items[Items.$indexFor(event.key)].currentPickerIndex == (Items[Items.$indexFor(event.key)].pickers.length - 1))) {
+  //           Items[Items.$indexFor(event.key)].currentPicker = Items[Items.$indexFor(event.key)].orignalBody.availabeExecutives[Items[Items.$indexFor(event.key)].currentPickerIndex + 1].userid;
+  //           Items[Items.$indexFor(event.key)].currentPickerIndex++;
+  //           Items.$save(Items.$indexFor(event.key)).then(function(ref) {
+  //             ref.key() === Items[Items.$indexFor(event.key)].$id;
+  //           });
+  //         } else {
+  //           console.log('Cannot be transferred');
+  //           return;
+  //         }
+  //       }, 30000, i, Items, event);
+  //
+  //     }
+  //     // });
+  //   }
+  // });
 
   $scope.hasRejected = function(item) {
     Items[Items.$indexFor(item)].rejectedBy.indexOf(UserIdStorageService.getAll()[0]) >= 0;
   }
 
   $scope.isCurrentPicker = function(item) {
-    return Items[Items.$indexFor(item)].currentPicker == UserIdStorageService.getAll()[0];
+    return Items[Items.$indexFor(item)].availableExecutives.indexOf(UserIdStorageService.getAll()[0]) >= 0;
   }
 
   $scope.isPickedByHim = function(item) {
@@ -252,13 +242,14 @@ angular.module('packagerouter.controllers', [])
 
   $scope.item = $state.params.item;
   $scope.accept = function(result) {
-    OrderStorageService.addAt(Items[Items.$indexFor(result)].orignalBody);
     Items[Items.$indexFor(result)].pickedBy = UserIdStorageService.getAll()[0];
     Items[Items.$indexFor(result)].currentPicker = "-1";
     Items.$save(Items.$indexFor(result)).then(function(ref) {
       ref.key() === Items[Items.$indexFor(result)].$id;
     });
-    $state.go('app.tracker',{myParam:angular.copy(Items[Items.$indexFor(result)].orignalBody)});
+    $state.go('app.tracker', {
+      myParam: angular.copy(Items[Items.$indexFor(result)].orignalBody)
+    });
   }
 
   $scope.reject = function(result) {
@@ -306,8 +297,22 @@ angular.module('packagerouter.controllers', [])
     });
 })
 
-.controller('TrackerCtrl', function($ionicHistory, $ionicPlatform, $scope, UserStorageService, UserIdStorageService, $state, $ionicNavBarDelegate, OrderStorageService, $http,$localStorage,$stateParams) {
-  if(angular.isDefined(OrderStorageService.getAt()) && angular.isDefined(OrderStorageService.getAt().ShipmentId) && angular.isDefined(OrderStorageService.getCustom('trackerCount'+OrderStorageService.getAt().ShipmentId))) $scope.ct = OrderStorageService.getCustom('trackerCount'+OrderStorageService.getAt().ShipmentId);
+.controller('TrackingCtrl', function($scope, $state, Items, UserIdStorageService, OrderStorageService, $http) {
+  $scope.items = Items;
+  $scope.isPickedByHim = function(item) {
+    return Items[Items.$indexFor(item)].pickedBy == UserIdStorageService.getAll()[0];
+  }
+  $scope.onItemClick = function(index){
+    var selectedItem = index.orignalBody;
+    OrderStorageService.addAt(selectedItem);
+    $state.go('app.tracker', {
+      myParam: angular.copy(selectedItem)
+    });
+  }
+})
+
+.controller('TrackerCtrl', function($ionicHistory, $ionicPlatform, $scope, UserStorageService, UserIdStorageService, $state, $ionicNavBarDelegate, OrderStorageService, $http, $localStorage, $stateParams) {
+  if (angular.isDefined(OrderStorageService.getAt()) && angular.isDefined(OrderStorageService.getAt().ShipmentId) && angular.isDefined(OrderStorageService.getCustom('trackerCount' + OrderStorageService.getAt().ShipmentId))) $scope.ct = OrderStorageService.getCustom('trackerCount' + OrderStorageService.getAt().ShipmentId);
   else $scope.ct = 1;
 
   if (angular.isDefined(OrderStorageService.getAt())) {
@@ -350,7 +355,7 @@ angular.module('packagerouter.controllers', [])
         .success(function(result) {
           console.log(result);
           $scope.ct++;
-          OrderStorageService.putCustom('trackerCount'+OrderStorageService.getAt().ShipmentId,$scope.ct);
+          OrderStorageService.putCustom('trackerCount' + OrderStorageService.getAt().ShipmentId, $scope.ct);
           $scope.value = percentArr[$scope.ct];
           $scope.statusColor = colorArr[$scope.ct];
           $scope.showText = statusTextArr[$scope.ct - 1];
