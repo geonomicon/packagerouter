@@ -1,35 +1,19 @@
 <ion-view view-title="Accepted">
   <ion-content>
-
     <div class="card">
-
-    <div class="item item-text-wrap">
-
+      <div class="item item-text-wrap">
         <div class="row">
           <div class="col">Delivery Add</div>
-          <div class="col">{{deliveryAddress}}</div>
+          <div class="col">{{item.orignalBody.deliveryAddress}}</div>
         </div>
         <div class="row">
           <div class="col">Pickup Add</div>
-          <div class="col">{{pickupAddress}}</div>
+          <div class="col">{{item.orignalBody.pickupAddress}}</div>
         </div>
-        <div class="row">
-          <div class="col">
-
-          </div>
-        </div>
-
       </div>
       <div class="item item-divider">
-        TimeSlot : {{timeslot}}
+        TimeSlot : {{item.orignalBody.timeSlot}}
       </div>
-
-      <div class="item item-divider">
-        Date : {{date}}
-      </div>
-      </div>
-
-
-
+    </div>
   </ion-content>
 </ion-view>

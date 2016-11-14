@@ -225,10 +225,11 @@ angular.module('packagerouter.controllers', [])
   // });
 
   $scope.hasRejected = function(item) {
-    Items[Items.$indexFor(item)].rejectedBy.indexOf(UserIdStorageService.getAll()[0]) >= 0;
+    return Items[Items.$indexFor(item)].rejectedBy.indexOf(UserIdStorageService.getAll()[0]) >= 0;
   }
 
   $scope.isCurrentPicker = function(item) {
+    if(angular.isUndefined(Items[Items.$indexFor(item)].availableExecutives)) return false;
     return Items[Items.$indexFor(item)].availableExecutives.indexOf(UserIdStorageService.getAll()[0]) >= 0;
   }
 
@@ -244,7 +245,7 @@ angular.module('packagerouter.controllers', [])
   $scope.accept = function(result) {
     Items[Items.$indexFor(result)].pickedBy = UserIdStorageService.getAll()[0];
     Items[Items.$indexFor(result)].currentPicker = "-1";
-    Items[Items.$indexFor(item)].availableExecutives.length = 0;
+    Items[Items.$indexFor(result)].availableExecutives.length = 0;
     Items.$save(Items.$indexFor(result)).then(function(ref) {
       ref.key() === Items[Items.$indexFor(result)].$id;
     });
@@ -258,6 +259,8 @@ angular.module('packagerouter.controllers', [])
       console.log('Cannot be rejected');
       return;
     } else {
+      var currentLocation = Items[Items.$indexFor(result)].availableExecutives.indexOf(UserIdStorageService.getAll()[0]);
+      Items[Items.$indexFor(result)].availableExecutives.splice(currentLocation,1);
       Items[Items.$indexFor(result)].rejectedBy.push(UserIdStorageService.getAll()[0]);
       Items[Items.$indexFor(result)].currentPicker = Items[Items.$indexFor(result)].orignalBody.availabeExecutives[Items[Items.$indexFor(result)].currentPickerIndex + 1].userid;
       Items[Items.$indexFor(result)].currentPickerIndex++;
@@ -281,20 +284,15 @@ angular.module('packagerouter.controllers', [])
       $scope.item.orignalBody.ShipmentId)
     .success(function(result) {
       console.log(result);
-      $scope.pickupAddress = result[0].PickupAddress;
-      $scope.deliveryAddress = result[0].DeliveryAddress;
-      $scope.timeslot = result[0].TimeSlote;
-      $scope.date = result[0].Date;
     });
 })
 
 .controller('RejectedCtrl', function($scope, $state, Items, UserIdStorageService, OrderStorageService, $http) {
   $scope.item = $state.params.item;
+  console.log($scope.item);
   $http.get('http://api.postoncloud.com/api/ShipMart/RejectShipmentList?ShipmentID=' + $scope.item.orignalBody.ShipmentId + '&AssignTo=' + UserIdStorageService.getAll()[0])
     .success(function(result) {
       console.log(result);
-      $scope.timeslot = result[0].timeSlot;
-      $scope.date = result[0].Date;
     });
 })
 
