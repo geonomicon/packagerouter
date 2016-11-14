@@ -1,0 +1,14 @@
+<ion-view view-title="Tracking Orders">
+  <ion-content>
+    <div class="list">
+      <div class="item item-divider">
+        Tracking Orders
+      </div>
+      <div ng-repeat='item in items' ng-show="isPickedByHim(item.$id)">
+        <a class="item" ng-click="onItemClick(item)">
+          {{item.orignalBody.itemName}}
+        </a>
+      </div>
+    </div>
+  </ion-content>
+</ion-view>

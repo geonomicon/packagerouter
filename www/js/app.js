@@ -79,6 +79,16 @@ angular.module('packagerouter', [
           }
         }
       })
+      .state('app.tracking', {
+        url: '/tracking',
+        cache: false,
+        views: {
+          'menuContent': {
+            templateUrl: 'templates/tracking.html',
+            controller: 'TrackingCtrl'
+          }
+        }
+      })
       .state('app.tracker', {
         url: '/tracker',
         cache: false,
