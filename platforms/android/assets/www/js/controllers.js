@@ -229,7 +229,7 @@ angular.module('packagerouter.controllers', [])
   }
 
   $scope.isCurrentPicker = function(item) {
-    if(angular.isUndefined(Items[Items.$indexFor(item)].availableExecutives)) return false;
+    if (angular.isUndefined(Items[Items.$indexFor(item)].availableExecutives)) return false;
     return Items[Items.$indexFor(item)].availableExecutives.indexOf(UserIdStorageService.getAll()[0]) >= 0;
   }
 
@@ -243,15 +243,19 @@ angular.module('packagerouter.controllers', [])
 
   $scope.item = $state.params.item;
   $scope.accept = function(result) {
-    Items[Items.$indexFor(result)].pickedBy = UserIdStorageService.getAll()[0];
-    Items[Items.$indexFor(result)].currentPicker = "-1";
-    Items[Items.$indexFor(result)].availableExecutives.length = 0;
-    Items.$save(Items.$indexFor(result)).then(function(ref) {
-      ref.key() === Items[Items.$indexFor(result)].$id;
-    });
-    $state.go('app.tracker', {
-      myParam: angular.copy(Items[Items.$indexFor(result)].orignalBody)
-    });
+    $http.get('http://api.postoncloud.com/api/ShipMart/AddShipmentTracking?ShipmentID=' +
+        $scope.item.orignalBody.ShipmentId + '&AssignTo=' + UserIdStorageService.getAll()[0] + '&Status=' + "Accepted")
+      .success(function(innerResult) {
+        console.log(innerResult);
+        Items[Items.$indexFor(result)].pickedBy = UserIdStorageService.getAll()[0];
+        Items[Items.$indexFor(result)].trackedBy = UserIdStorageService.getAll()[0];
+        Items[Items.$indexFor(result)].currentPicker = "-1";
+        Items[Items.$indexFor(result)].availableExecutives.length = 0;
+        Items.$save(Items.$indexFor(result)).then(function(ref) {
+          ref.key() === Items[Items.$indexFor(result)].$id;
+        });
+        $state.go('app.tracking');
+      });
   }
 
   $scope.reject = function(result) {
@@ -259,67 +263,58 @@ angular.module('packagerouter.controllers', [])
       console.log('Cannot be rejected');
       return;
     } else {
-      var currentLocation = Items[Items.$indexFor(result)].availableExecutives.indexOf(UserIdStorageService.getAll()[0]);
-      Items[Items.$indexFor(result)].availableExecutives.splice(currentLocation,1);
-      Items[Items.$indexFor(result)].rejectedBy.push(UserIdStorageService.getAll()[0]);
-      Items[Items.$indexFor(result)].currentPicker = Items[Items.$indexFor(result)].orignalBody.availabeExecutives[Items[Items.$indexFor(result)].currentPickerIndex + 1].userid;
-      Items[Items.$indexFor(result)].currentPickerIndex++;
-      Items.$save(Items.$indexFor(result)).then(function(ref) {
-        ref.key() === Items[Items.$indexFor(result)].$id;
-        $state.go('app.location', {
-          isAccepted: false,
-          isRejected: true,
-          isOrder: false
+      $http.get('http://api.postoncloud.com/api/ShipMart/RejectShipmentList?ShipmentID=' + $scope.item.orignalBody.ShipmentId + '&AssignTo=' + UserIdStorageService.getAll()[0])
+        .success(function(innerResult) {
+          console.log(innerResult);
+          var currentLocation = Items[Items.$indexFor(result)].availableExecutives.indexOf(UserIdStorageService.getAll()[0]);
+          Items[Items.$indexFor(result)].availableExecutives.splice(currentLocation, 1);
+          Items[Items.$indexFor(result)].rejectedBy.push(UserIdStorageService.getAll()[0]);
+          Items[Items.$indexFor(result)].currentPicker = Items[Items.$indexFor(result)].orignalBody.availabeExecutives[Items[Items.$indexFor(result)].currentPickerIndex + 1].userid;
+          Items[Items.$indexFor(result)].currentPickerIndex++;
+          Items.$save(Items.$indexFor(result)).then(function(ref) {
+            ref.key() === Items[Items.$indexFor(result)].$id;
+            $state.go('app.location', {
+              isAccepted: false,
+              isRejected: true,
+              isOrder: false
+            });
+          });
         });
-      });
     }
-
   }
 })
 
 .controller('acceptedCtrl', function($scope, $state, Items, UserIdStorageService, OrderStorageService, $http) {
   $scope.item = $state.params.item;
   console.log($scope.item);
-  $http.get('http://api.postoncloud.com/api/ShipMart/AcceptShipmentList?ShipmentID=' +
-      $scope.item.orignalBody.ShipmentId)
-    .success(function(result) {
-      console.log(result);
-    });
+
 })
 
 .controller('RejectedCtrl', function($scope, $state, Items, UserIdStorageService, OrderStorageService, $http) {
   $scope.item = $state.params.item;
   console.log($scope.item);
-  $http.get('http://api.postoncloud.com/api/ShipMart/RejectShipmentList?ShipmentID=' + $scope.item.orignalBody.ShipmentId + '&AssignTo=' + UserIdStorageService.getAll()[0])
-    .success(function(result) {
-      console.log(result);
-    });
+
 })
 
 .controller('TrackingCtrl', function($scope, $state, Items, UserIdStorageService, OrderStorageService, $http) {
   $scope.items = Items;
-  $scope.isPickedByHim = function(item) {
-    return Items[Items.$indexFor(item)].pickedBy == UserIdStorageService.getAll()[0];
+  $scope.isTrackedByHim = function(item) {
+    return Items[Items.$indexFor(item)].trackedBy == UserIdStorageService.getAll()[0];
   }
-  $scope.onItemClick = function(index){
-    var selectedItem = index.orignalBody;
-    OrderStorageService.addAt(selectedItem);
+  $scope.onItemClick = function(index) {
+    var selectedItem = index;
+    OrderStorageService.addAt(selectedItem.orignalBody);
     $state.go('app.tracker', {
-      myParam: angular.copy(selectedItem)
+      myParam: angular.copy(index.$id)
     });
   }
 })
 
-.controller('TrackerCtrl', function($ionicHistory, $ionicPlatform, $scope, UserStorageService, UserIdStorageService, $state, $ionicNavBarDelegate, OrderStorageService, $http, $localStorage, $stateParams) {
+.controller('TrackerCtrl', function($ionicHistory, $ionicPlatform, $scope, UserStorageService, UserIdStorageService, $state, $ionicNavBarDelegate, OrderStorageService, $http, $localStorage, $stateParams,Items) {
   if (angular.isDefined(OrderStorageService.getAt()) && angular.isDefined(OrderStorageService.getAt().ShipmentId) && angular.isDefined(OrderStorageService.getCustom('trackerCount' + OrderStorageService.getAt().ShipmentId))) $scope.ct = OrderStorageService.getCustom('trackerCount' + OrderStorageService.getAt().ShipmentId);
   else $scope.ct = 1;
-
   if (angular.isDefined(OrderStorageService.getAt())) {
-    $http.get('http://api.postoncloud.com/api/ShipMart/AddShipmentTracking?ShipmentID=' +
-        OrderStorageService.getAt().ShipmentId + '&AssignTo=' + UserIdStorageService.getAll()[0] + '&Status=' + "Accepted")
-      .success(function(result) {
-        viewTracking();
-      });
+    viewTracking();
   } else {
     $state.go('app.location', {
       isAccepted: false,
@@ -334,7 +329,6 @@ angular.module('packagerouter.controllers', [])
     var percentArr = [0, 50, 100];
     var classChanger = [''];
     var statusTextArr = ['Accepted', 'Reached Vendor', 'Picked from Vendor', 'Reached Customer Premises', 'Delivered', null];
-
     if (angular.isUndefined(OrderStorageService.getAt())) {
       $scope.rangeColorPainters = 'range-royal';
       $scope.nothingToSeeHere = true;
@@ -349,7 +343,6 @@ angular.module('packagerouter.controllers', [])
     }
 
     $scope.updateStatus = function() {
-
       $http.get('http://api.postoncloud.com/api/ShipMart/AddShipmentTracking?ShipmentID=' + $scope.item.ShipmentId + '&AssignTo=' + UserIdStorageService.getAll()[0] + '&Status=' + $scope.statusText)
         .success(function(result) {
           console.log(result);
@@ -361,18 +354,20 @@ angular.module('packagerouter.controllers', [])
           $scope.buttonText = statusTextArr[$scope.ct];
           $scope.statusText = statusTextArr[$scope.ct];
           if ($scope.buttonText == null) {
-            $scope.isDelivered = true;
+            Items[Items.$indexFor($stateParams.myParam)].trackedBy = null;
+            Items.$save(Items.$indexFor($stateParams.myParam)).then(function(ref) {
+              ref.key() === Items[Items.$indexFor($stateParams.myParam)].$id;
+              $scope.isDelivered = true;
+            });
           }
         });
 
     }
     $scope.availableOnes = function() {
-
       $state.go('app.location', {
         isAccepted: false,
         isRejected: false,
         isOrder: true,
-
       });
     }
 

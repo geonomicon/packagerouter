@@ -298,6 +298,12 @@ angular.module('packagerouter.controllers', [])
 
 .controller('TrackingCtrl', function($scope, $state, Items, UserIdStorageService, OrderStorageService, $http) {
   $scope.items = Items;
+  if(Items.length==1){
+    OrderStorageService.addAt(Items[0].orignalBody);
+    $state.go('app.tracker', {
+      myParam: angular.copy(Items[0])
+    });
+  }
   $scope.isTrackedByHim = function(item) {
     return Items[Items.$indexFor(item)].trackedBy == UserIdStorageService.getAll()[0];
   }
@@ -310,7 +316,7 @@ angular.module('packagerouter.controllers', [])
   }
 })
 
-.controller('TrackerCtrl', function($ionicHistory, $ionicPlatform, $scope, UserStorageService, UserIdStorageService, $state, $ionicNavBarDelegate, OrderStorageService, $http, $localStorage, $stateParams,Items) {
+.controller('TrackerCtrl', function($ionicHistory, $ionicPlatform, $scope, UserStorageService, UserIdStorageService, $state, $ionicNavBarDelegate, OrderStorageService, $http, $localStorage, $stateParams, Items) {
   if (angular.isDefined(OrderStorageService.getAt()) && angular.isDefined(OrderStorageService.getAt().ShipmentId) && angular.isDefined(OrderStorageService.getCustom('trackerCount' + OrderStorageService.getAt().ShipmentId))) $scope.ct = OrderStorageService.getCustom('trackerCount' + OrderStorageService.getAt().ShipmentId);
   else $scope.ct = 1;
   if (angular.isDefined(OrderStorageService.getAt())) {
@@ -325,10 +331,19 @@ angular.module('packagerouter.controllers', [])
   }
 
   function viewTracking() {
-    var colorArr = ['button-assertive', 'button-positive', 'button-balanced', 'button-calm', 'button-energized'];
-    var percentArr = [0, 50, 100];
-    var classChanger = [''];
-    var statusTextArr = ['Accepted', 'Reached Vendor', 'Picked from Vendor', 'Reached Customer Premises', 'Delivered', null];
+    $scope.isCOD = OrderStorageService.getAt().PaymentStatus == 'COD';
+    if ($scope.isCOD) {
+      var colorArr = ['button-assertive', 'button-positive', 'button-balanced', 'button-calm', 'button-energized', 'button-royal'];
+      var percentArr = [0, 50, 100];
+      var classChanger = [''];
+      var statusTextArr = ['Accepted', 'Reached Vendor', 'Picked from Vendor', 'Reached Customer Premises', 'Delivered', 'Paid', null];
+    } else {
+      var colorArr = ['button-assertive', 'button-positive', 'button-balanced', 'button-calm', 'button-energized'];
+      var percentArr = [0, 50, 100];
+      var classChanger = [''];
+      var statusTextArr = ['Accepted', 'Reached Vendor', 'Picked from Vendor', 'Reached Customer Premises', 'Delivered', null];
+    }
+
     if (angular.isUndefined(OrderStorageService.getAt())) {
       $scope.rangeColorPainters = 'range-royal';
       $scope.nothingToSeeHere = true;
@@ -357,7 +372,7 @@ angular.module('packagerouter.controllers', [])
             Items[Items.$indexFor($stateParams.myParam)].trackedBy = null;
             Items.$save(Items.$indexFor($stateParams.myParam)).then(function(ref) {
               ref.key() === Items[Items.$indexFor($stateParams.myParam)].$id;
-              $scope.isDelivered = true;
+              $scope.finalised = true;
             });
           }
         });
