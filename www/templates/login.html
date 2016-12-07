@@ -1,27 +1,27 @@
-<ion-view view-title="Login"  hide-nav-bar="true">
+<ion-view view-title="Login" hide-nav-bar="true">
   <ion-content>
-
-
-
-  <div class="image">
-    <img src="img/logo.png">
-</div>
+    <div class="image">
+      <img src="img/logo.png">
+    </div>
     <div class="card">
-    <form ng-submit="doLogin(login.username,login.password)">
-      <div class="list">
-        <label class="item item-input">
+      <form ng-submit="doLogin(login.username,login.password)">
+        <div class="list">
+          <label class="item item-input">
           <span class="input-label">Username</span>
           <input type="text" ng-model="login.username">
         </label>
-        <label class="item item-input">
+          <label class="item item-input">
           <span class="input-label">Password</span>
           <input type="password" ng-model="login.password">
         </label>
-        <label class="item">
+          <label class="item">
           <button class="button button-block" ng-class="animateClass" type="submit">Log in</button>
         </label>
-      </div>
-    </form>
+        </div>
+      </form>
+      <label class="item">
+      <a>v 0.5.0</a>
+    </label>
     </div>
   </ion-content>
 </ion-view>

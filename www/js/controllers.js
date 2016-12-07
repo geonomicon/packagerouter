@@ -106,7 +106,7 @@ angular.module('packagerouter.controllers', [])
   $localStorage,
   $ionicPlatform, $ionicPopup,
   $ionicHistory) {
-  //
+  // NOtifications Section
   // ionic.Platform.ready(function() {
   //   $cordovaLocalNotification.add({
   //     id: 1,
@@ -293,17 +293,10 @@ angular.module('packagerouter.controllers', [])
 .controller('RejectedCtrl', function($scope, $state, Items, UserIdStorageService, OrderStorageService, $http) {
   $scope.item = $state.params.item;
   console.log($scope.item);
-
 })
 
 .controller('TrackingCtrl', function($scope, $state, Items, UserIdStorageService, OrderStorageService, $http) {
   $scope.items = Items;
-  if(Items.length==1){
-    OrderStorageService.addAt(Items[0].orignalBody);
-    $state.go('app.tracker', {
-      myParam: angular.copy(Items[0])
-    });
-  }
   $scope.isTrackedByHim = function(item) {
     return Items[Items.$indexFor(item)].trackedBy == UserIdStorageService.getAll()[0];
   }
@@ -337,11 +330,13 @@ angular.module('packagerouter.controllers', [])
       var percentArr = [0, 50, 100];
       var classChanger = [''];
       var statusTextArr = ['Accepted', 'Reached Vendor', 'Picked from Vendor', 'Reached Customer Premises', 'Delivered', 'Paid', null];
+      var buttonTextArr = ['Accepted', 'Reached Vendor', 'Picked from Vendor', 'Reached Customer Premises', 'Delivered', 'Collect Payment', null];
     } else {
       var colorArr = ['button-assertive', 'button-positive', 'button-balanced', 'button-calm', 'button-energized'];
       var percentArr = [0, 50, 100];
       var classChanger = [''];
       var statusTextArr = ['Accepted', 'Reached Vendor', 'Picked from Vendor', 'Reached Customer Premises', 'Delivered', null];
+      var buttonTextArr = ['Accepted', 'Reached Vendor', 'Picked from Vendor', 'Reached Customer Premises', 'Delivered', null];
     }
 
     if (angular.isUndefined(OrderStorageService.getAt())) {
@@ -358,7 +353,8 @@ angular.module('packagerouter.controllers', [])
     }
 
     $scope.updateStatus = function() {
-      $http.get('http://api.postoncloud.com/api/ShipMart/AddShipmentTracking?ShipmentID=' + $scope.item.ShipmentId + '&AssignTo=' + UserIdStorageService.getAll()[0] + '&Status=' + $scope.statusText)
+      $http.get('http://api.postoncloud.com/api/ShipMart/AddShipmentTracking?ShipmentID=' +
+      $scope.item.ShipmentId + '&AssignTo=' + UserIdStorageService.getAll()[0] + '&Status=' + $scope.statusText)
         .success(function(result) {
           console.log(result);
           $scope.ct++;
@@ -366,8 +362,11 @@ angular.module('packagerouter.controllers', [])
           $scope.value = percentArr[$scope.ct];
           $scope.statusColor = colorArr[$scope.ct];
           $scope.showText = statusTextArr[$scope.ct - 1];
-          $scope.buttonText = statusTextArr[$scope.ct];
+          $scope.buttonText = buttonTextArr[$scope.ct];
           $scope.statusText = statusTextArr[$scope.ct];
+          if ($scope.buttonText == 'Delivered') {
+            $scope.amountVisible = true;
+          }
           if ($scope.buttonText == null) {
             Items[Items.$indexFor($stateParams.myParam)].trackedBy = null;
             Items.$save(Items.$indexFor($stateParams.myParam)).then(function(ref) {
